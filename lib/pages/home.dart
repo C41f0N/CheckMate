@@ -1,5 +1,5 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/widgets/task_card.dart';
 import '../dialogues/add_task_dialogue.dart';
@@ -12,11 +12,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  
   TaskDatabase db = TaskDatabase();
+  final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
 
   @override
   void initState() {
-    db.createDefaultData();
+
+    if (_myBox.get("TASKS_LIST") == null) {
+      db.createDefaultData();
+    }
     super.initState();
   }
 
@@ -24,17 +29,19 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    db.loadData();
     List<List> taskList = db.taskList;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Sarim's To-Do App"),
+        title: const Text("T O D O   L I S T"),
         centerTitle: true,
         actions: [
           IconButton(
               onPressed: () {
                 setState(() {
-                  reorderMode = !reorderMode;
+                  // reorderMode = !reorderMode;
+                  db.uploadToServer();
                 });
               },
               icon: reorderMode
@@ -44,7 +51,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: reorderMode
           ? ReorderableListView.builder(
-              padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
               itemCount: taskList.length,
               itemBuilder: (context, index) {
                 return TaskCard(
@@ -68,7 +75,7 @@ class _HomePageState extends State<HomePage> {
               },
             )
           : ListView.builder(
-              padding: EdgeInsets.fromLTRB(0, 6, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
               clipBehavior: Clip.antiAlias,
               itemCount: taskList.length,
               itemBuilder: (context, index) {

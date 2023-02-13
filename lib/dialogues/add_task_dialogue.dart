@@ -39,7 +39,7 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
                 fillColor: Colors.white,
                 focusColor: Colors.white,
                 errorText: errorText,
-                errorBorder: OutlineInputBorder(
+                errorBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red, width: 3),
                 ),
                 enabledBorder: OutlineInputBorder(

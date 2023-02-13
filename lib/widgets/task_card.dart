@@ -39,15 +39,17 @@ class TaskCard extends StatelessWidget {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Color.fromARGB(255, 255, 17, 0),
+                color: const Color.fromARGB(255, 255, 17, 0),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.15,),
-                  Icon(
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.15,
+                  ),
+                  const Icon(
                     Icons.delete,
-                    size: 35,
+                    size: 30,
                   )
                 ],
               ),
@@ -68,19 +70,31 @@ class TaskCard extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: completed
-                  ? reorderingMode ? Colors.grey[800]!.withOpacity(0.7) : Colors.grey[800]
-                  : reorderingMode ? Theme.of(context).colorScheme.secondary.withOpacity(0.7) : Theme.of(context).colorScheme.secondary,
+                  ? reorderingMode
+                      ? Colors.grey[800]!.withOpacity(0.7)
+                      : Colors.grey[800]
+                  : reorderingMode
+                      ? Theme.of(context).colorScheme.secondary.withOpacity(0.7)
+                      : Theme.of(context).colorScheme.secondary,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: [
-                  reorderingMode ? Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: const Icon(Icons.menu),
-                  ) : Checkbox(value: completed, onChanged: ((completed) {})),
-                  Container(
+                  reorderingMode
+                      ? const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Icon(Icons.menu),
+                        )
+                      : Checkbox(
+                          value: completed,
+                          onChanged: ((completed) {
+                            if (!reorderingMode) {
+                              onTaskCheckChange(taskName, completed);
+                            }
+                          })),
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: AutoSizeText(
                       taskName,
