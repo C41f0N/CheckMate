@@ -84,15 +84,9 @@ class TaskDatabase {
     final encryptionPass = await generate32CharEncryptionCode('monpss');
     final encryptedData =  encryptTaskData(taskDataString, encryptionPass);
     
-    // uploading
-    var result = await http.get(Uri.parse('https://sarimahmed.tech/sarim-s_todo_app/upload_task_data.php?username=sarim&hash=anewhash&task_data=${Uri.encodeComponent(encryptedData)}'));
-    // print('https://sarimahmed.tech/sarim-s_todo_app/upload_task_data.php?username=sarim&hash=anewhash&tasks_data=${Uri.encodeComponent(encryptedData)}');
-
-    // fetching
-    result = await http.get(Uri.parse('https://sarimahmed.tech/sarim-s_todo_app/get_task_data.php?username=sarim&hash=anewhash'));
-    final fetchedencryptedData = result.body;
-
-    print(decryptTaskData(fetchedencryptedData, encryptionPass));
+    await http.get(Uri.parse('https://sarimahmed.tech/sarim-s_todo_app/upload_task_data.php?username=sarim&hash=anewhash&task_data=${Uri.encodeComponent(encryptedData)}'));
+    
+    var result = await http.get(Uri.parse('https://sarimahmed.tech/sarim-s_todo_app/get_task_data.php?username=sarim&hash=anewhash'));
     
   }
 }
