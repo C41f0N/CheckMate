@@ -29,86 +29,110 @@ class _LoginPageState extends State<LoginPage> {
           if (connection.hasData) {
             return Scaffold(
               body: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(height: MediaQuery.of(context).size.height * 0.28,),
-                    
-                    // Login Title
-                    Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 35,
-                        color: Colors.grey[200],
-                        fontWeight: FontWeight.w600,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.28,
                       ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
 
-                    // Username Input Field
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8 > 320
-                          ? 320
-                          : MediaQuery.of(context).size.width * 0.8,
-                      child: TextField(
-                        enabled: connection.data! && !processing,
-                        controller: usernameController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          errorText: usernameError,
-                          label: const Text("Username"),
+                      // Login Title
+                      Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 35,
+                          color: Colors.grey[200],
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
+                      const SizedBox(
+                        height: 40,
+                      ),
 
-                    // Password Input Field
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8 > 320
-                          ? 320
-                          : MediaQuery.of(context).size.width * 0.8,
-                      child: TextField(
-                        obscureText:
-                            hidePassword || processing || !connection.data!,
-                        enabled: connection.data! && !processing,
-                        controller: passwordController,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          errorText: passwordError,
-                          label: const Text("Password"),
-                          suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  hidePassword = !hidePassword;
-                                });
-                              },
-                              splashRadius: 5,
-                              icon: Icon(
-                                hidePassword
-                                    ? Icons.remove_red_eye
-                                    : Icons.shield_outlined,
-                                color: Colors.grey[600],
-                              )),
+                      // Username Input Field
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          enabled: connection.data! && !processing,
+                          controller: usernameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            errorText: usernameError,
+                            label: const Text("Username"),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                      const SizedBox(
+                        height: 10,
+                      ),
 
-                    // Login Button if connected, else warning message
-                    connection.data!
-                        ? GestureDetector(
-                            onTap: processing ? () {} : login,
-                            child: Container(
+                      // Password Input Field
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          obscureText:
+                              hidePassword || processing || !connection.data!,
+                          enabled: connection.data! && !processing,
+                          controller: passwordController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            errorText: passwordError,
+                            label: const Text("Password"),
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    hidePassword = !hidePassword;
+                                  });
+                                },
+                                splashRadius: 5,
+                                icon: Icon(
+                                  hidePassword
+                                      ? Icons.remove_red_eye
+                                      : Icons.shield_outlined,
+                                  color: Colors.grey[600],
+                                )),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+
+                      // Login Button if connected, else warning message
+                      connection.data!
+                          ? GestureDetector(
+                              onTap: !processing &&
+                                      (passwordController.text.isNotEmpty &&
+                                          usernameController.text.isNotEmpty)
+                                  ? login
+                                  : () {},
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                alignment: Alignment.center,
+                                height: 55,
+                                width: MediaQuery.of(context).size.width * 0.8 >
+                                        320
+                                    ? 320
+                                    : MediaQuery.of(context).size.width * 0.8,
+                                child: const Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            )
+                          : Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Colors.redAccent[700]!.withAlpha(230),
                               ),
                               alignment: Alignment.center,
                               height: 55,
@@ -116,55 +140,52 @@ class _LoginPageState extends State<LoginPage> {
                                   MediaQuery.of(context).size.width * 0.8 > 320
                                       ? 320
                                       : MediaQuery.of(context).size.width * 0.8,
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(color: Colors.white),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: const [
+                                  Icon(Icons
+                                      .signal_wifi_connected_no_internet_4_rounded),
+                                  Text(
+                                    "No internet connection :(",
+                                  ),
+                                  SizedBox(),
+                                ],
                               ),
                             ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.23),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "First time?",
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          GestureDetector(
+                            onTap: (() {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) =>
+                                          const RegisterPage())));
+                            }),
+                            child: Text(
+                              "Register",
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
                           )
-                        : Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4),
-                              color: Colors.redAccent[700]!.withAlpha(230),
-                            ),
-                            alignment: Alignment.center,
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.8 > 320
-                                ? 320
-                                : MediaQuery.of(context).size.width * 0.8,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: const [
-                                Icon(Icons
-                                    .signal_wifi_connected_no_internet_4_rounded),
-                                Text(
-                                  "No internet connection :(",
-                                ),
-                                SizedBox(),
-                              ],
-                            ),
-                          ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.23),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "New here?",
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                        const SizedBox(width: 4,),
-                        GestureDetector(
-                          onTap: (() {
-                            Navigator.pop(context);
-                            Navigator.push(context, MaterialPageRoute(builder: ((context) => const RegisterPage())));
-                          }),
-                          child: Text("Signup", style: TextStyle(color: Theme.of(context).colorScheme.primary),),
-                        )
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             );
@@ -179,8 +200,8 @@ class _LoginPageState extends State<LoginPage> {
   // Login Function
 
   Future<void> login() async {
-    bool username_valid = false;
-    bool password_valid = false;
+    bool usernameValid = false;
+    bool passwordValid = false;
 
     //set status to: processing data
     setState(() {
@@ -189,6 +210,7 @@ class _LoginPageState extends State<LoginPage> {
 
     // Show loading Dialog
     showDialog(
+        // barrierDismissible: false,
         context: context,
         builder: ((context) => AlertDialog(
               content: SizedBox(
@@ -211,20 +233,20 @@ class _LoginPageState extends State<LoginPage> {
     // Check if username is valid
     if (await verifyUsername(usernameController.text)) {
       usernameError = null;
-      username_valid = true;
+      usernameValid = true;
     } else {
-      username_valid = false;
+      usernameValid = false;
       usernameError = "Username does not exist.";
     }
 
-    if (username_valid) {
+    if (usernameValid) {
       // Verify Password
       if (await verifyPassword(
           usernameController.text, passwordController.text)) {
-        password_valid = true;
+        passwordValid = true;
         passwordError = null;
       } else {
-        password_valid = false;
+        passwordValid = false;
         passwordError = "Incorrect Password";
       }
       ;
@@ -238,11 +260,13 @@ class _LoginPageState extends State<LoginPage> {
       processing = false;
     });
 
-    if (username_valid && password_valid) {
-      print("Verification Successfull.");
-      // Navigator.pop(context);
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: ((context) => const HomePage())));
+    if (usernameValid && passwordValid) {
+      Navigator.pop(context);
+      Navigator.push(
+          context, MaterialPageRoute(builder: ((context) => const HomePage())));
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Login Successfull.")));
     }
   }
 }

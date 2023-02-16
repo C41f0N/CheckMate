@@ -27,3 +27,16 @@ Future<bool> verifyPassword(String username, String password) async {
     return false;
   }
 }
+
+// Function register new user
+Future<bool> registerUser(String username, String password) async {
+  final String hash = await hashPass(password);
+
+  try {
+    var result = await http.get(Uri.parse(
+        'https://sarimahmed.tech/sarim-s_todo_app/add_user.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}'));
+    return result.body == "1";
+  } on SocketException catch (_) {
+    return false;
+  }
+}

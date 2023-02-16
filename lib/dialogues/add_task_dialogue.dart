@@ -35,9 +35,10 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
           children: [
             TextField(
               controller: taskNameController,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                fillColor: Colors.white,
-                focusColor: Colors.white,
+                label: Text("New Task"),
+                // labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
                 errorText: errorText,
                 errorBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.red, width: 3),
@@ -45,11 +46,6 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.grey[800]!,
                   ),
                 ),
               ),

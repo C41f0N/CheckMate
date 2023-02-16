@@ -40,8 +40,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
               onPressed: () {
                 setState(() {
-                  // reorderMode = !reorderMode;
-                  db.uploadToServer();
+                  reorderMode = !reorderMode;
                 });
               },
               icon: reorderMode

@@ -3,7 +3,7 @@ import 'package:sarims_todo_app/data_ops/encryption.dart';
 import 'package:http/http.dart' as http;
 
 class TaskDatabase {
-  List<List> taskList = [];
+  List<List<dynamic>> taskList = [];
   final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
 
   void createDefaultData() {
@@ -33,9 +33,10 @@ class TaskDatabase {
 
   void saveData() {
     List<String> combinedStringList = [];
-    for (var element in taskList) {
-      element[1] = element[1] ? "true" : "false";
-      combinedStringList.add(element.join("||"));
+    for (var taskData in taskList) {
+      List newTaskData = [taskData[0], ""];
+      newTaskData[1] = taskData[1] ? "true" : "false";
+      combinedStringList.add(newTaskData.join("||"));
     }
 
     _myBox.put("TASKS_LIST", combinedStringList);
