@@ -16,9 +16,8 @@ class TaskDatabase {
     ];
   }
 
-  Future<void> loadDataFromDevice() async {
-    await getTaskDataFromServer();
-    if (taskList.isEmpty) {
+  void loadData() {
+    if (_myBox.get("TASKS_LIST") == null) {
       // Create defaults and save
       createDefaultData();
       saveData();
@@ -35,7 +34,7 @@ class TaskDatabase {
     }
   }
 
-  void saveDataToDevice() {
+  void saveData() {
     List<String> combinedStringList = [];
     for (var taskData in taskList) {
       List newTaskData = [taskData[0], ""];
@@ -47,39 +46,39 @@ class TaskDatabase {
     uploadDataToServer();
   }
 
-  Future<void> changeCompleteStatus(String taskName) async {
+  void changeCompleteStatus(String taskName) {
     int index = taskList.indexWhere((taskData) => taskData[0] == taskName);
     taskList[index][1] = !taskList[index][1];
-    await saveData();
+    saveData();
   }
 
-  Future<void> addTask(String taskName) async {
+  void addTask(String taskName) {
     taskList.insert(0, [taskName, false]);
-    await saveData();
+    saveData();
   }
 
-  Future<void> addTaskAtIndex(List task, int index) async {
+  void addTaskAtIndex(List task, int index) {
     taskList.insert(index, task);
-    await saveData();
+    saveData();
   }
 
-  Future<bool> checkTaskExistence(String taskName) async {
-    await loadData();
+  bool checkTaskExistence(String taskName) {
+    loadData();
     int index = taskList.indexWhere((element) => element[0] == taskName);
     return index != -1;
   }
 
-  Future<void> deleteTask(String taskName) async {
+  void deleteTask(String taskName) {
     taskList.removeWhere((element) => element[0] == taskName);
-    await saveData();
+    saveData();
   }
 
-  Future<List> deleteTaskAtIndex(int index) async {
-    await saveData();
+  List deleteTaskAtIndex(int index) {
+    saveData();
     return taskList.removeAt(index);
   }
 
-  Future<void> uploadDataToServer() async {
+  Future<bool> uploadDataToServer() async {
     List<String> combinedStringList = [];
 
     for (var taskData in taskList) {
@@ -92,14 +91,14 @@ class TaskDatabase {
     final encryptedData =
         encryptTaskData(taskDataString, getSessionEncryptionKey());
 
-    uploadEncryptedDataToServer(encryptedData);
+    return await uploadEncryptedDataToServer(encryptedData);
   }
 
   Future<bool> getTaskDataFromServer() async {
     // Get Data
     final encryptedData = await fetchEncryptedDataFromServer();
 
-    if (encryptedData.isNotEmpty) {
+    if (encryptedData.isNotEmpty && getSessionEncryptionKey().isNotEmpty) {
       // Decrypt Data
       final decryptedData =
           decryptTaskData(encryptedData, getSessionEncryptionKey());
@@ -125,16 +124,4 @@ class TaskDatabase {
     }
   }
 
-  Future<void> saveData() async {
-    await uploadDataToServer();
-    getTaskDataFromServer();
-    // saveDataToDevice();
-  }
-
-  Future<bool> loadData() async {
-    return await getTaskDataFromServer();
-
-    // saveDataToDevice();
-    // loadDataFromDevice();
-  }
 }

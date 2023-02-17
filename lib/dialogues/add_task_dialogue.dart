@@ -10,7 +10,7 @@ class AddTaskDialogue extends StatefulWidget {
   State<AddTaskDialogue> createState() => _AddTaskDialogueState();
 
   final void Function(String) addTaskCallback;
-  final Future<bool> Function(String) checkTaskExistenceCallback;
+  final bool Function(String) checkTaskExistenceCallback;
 }
 
 class _AddTaskDialogueState extends State<AddTaskDialogue> {

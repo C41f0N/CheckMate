@@ -50,4 +50,7 @@ void removeLoginInfoFromDevice() {
 
   // set login status to false
   _myBox.put("LOGGED_IN", false);
+
+  // Clear any planned upload events for future
+  _myBox.put("SERVER_UPDATE_NEEDED", false);
 }
