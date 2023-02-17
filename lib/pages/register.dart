@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import 'package:sarims_todo_app/pages/home.dart';
 
-import '../data_ops/cloud_connections.dart';
+import '../data_ops/user_session_cloud_ops.dart';
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -316,11 +316,11 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     if (usernameValid && registerSuccessful) {
-      Navigator.pop(context);
-      Navigator.push(context,
-          MaterialPageRoute(builder: ((context) => const LoginPage())));
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Register Successful! Log into your account.")));
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text("Register Successful! You can log into your account.")));
     }
   }
 }

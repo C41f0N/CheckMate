@@ -10,7 +10,7 @@ class AddTaskDialogue extends StatefulWidget {
   State<AddTaskDialogue> createState() => _AddTaskDialogueState();
 
   final void Function(String) addTaskCallback;
-  final bool Function(String) checkTaskExistenceCallback;
+  final Future<bool> Function(String) checkTaskExistenceCallback;
 }
 
 class _AddTaskDialogueState extends State<AddTaskDialogue> {
@@ -51,8 +51,8 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                if (!widget
+              onPressed: () async {
+                if (!await widget
                     .checkTaskExistenceCallback(taskNameController.text)) {
                   if (taskNameController.text != '') {
                     widget.addTaskCallback(taskNameController.text);

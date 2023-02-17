@@ -4,7 +4,8 @@ import 'package:observe_internet_connectivity/observe_internet_connectivity.dart
 import 'package:sarims_todo_app/pages/home.dart';
 import 'package:sarims_todo_app/pages/register.dart';
 
-import '../data_ops/cloud_connections.dart';
+import '../data_ops/user_session_cloud_ops.dart';
+import '../data_ops/user_session_local_ops.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -261,10 +262,13 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (usernameValid && passwordValid) {
-      Navigator.pop(context);
-      Navigator.push(
-          context, MaterialPageRoute(builder: ((context) => const HomePage())));
+      saveLoginInfoToDevice(
+        usernameController.text,
+        passwordController.text,
+      );
 
+      Navigator.pop(context);
+      Navigator.pushNamed(context, "/home");
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Login Successfull.")));
     }

@@ -40,3 +40,4 @@ Future<bool> registerUser(String username, String password) async {
     return false;
   }
 }
+

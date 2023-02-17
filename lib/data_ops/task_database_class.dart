@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sarims_todo_app/data_ops/encryption.dart';
-import 'package:http/http.dart' as http;
+import 'package:sarims_todo_app/data_ops/task_data_from_cloud.dart';
+import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
 
 class TaskDatabase {
   List<List<dynamic>> taskList = [];
@@ -15,11 +16,14 @@ class TaskDatabase {
     ];
   }
 
-  void loadData() {
-    if (_myBox.get("TASKS_LIST") == null) {
+  Future<void> loadDataFromDevice() async {
+    await getTaskDataFromServer();
+    if (taskList.isEmpty) {
+      // Create defaults and save
       createDefaultData();
       saveData();
     } else {
+      // fetch data from server
       List<String> combinedStringList = _myBox.get('TASKS_LIST');
       taskList = [];
       for (var element in combinedStringList) {
@@ -31,7 +35,7 @@ class TaskDatabase {
     }
   }
 
-  void saveData() {
+  void saveDataToDevice() {
     List<String> combinedStringList = [];
     for (var taskData in taskList) {
       List newTaskData = [taskData[0], ""];
@@ -40,54 +44,97 @@ class TaskDatabase {
     }
 
     _myBox.put("TASKS_LIST", combinedStringList);
+    uploadDataToServer();
   }
 
-  void changeCompleteStatus(String taskName) {
+  Future<void> changeCompleteStatus(String taskName) async {
     int index = taskList.indexWhere((taskData) => taskData[0] == taskName);
     taskList[index][1] = !taskList[index][1];
-    saveData();
+    await saveData();
   }
 
-  void addTask(String taskName) {
+  Future<void> addTask(String taskName) async {
     taskList.insert(0, [taskName, false]);
-    saveData();
+    await saveData();
   }
 
-  void addTaskAtIndex(List task, int index) {
+  Future<void> addTaskAtIndex(List task, int index) async {
     taskList.insert(index, task);
-    saveData();
+    await saveData();
   }
 
-  bool checkTaskExistence(String taskName) {
+  Future<bool> checkTaskExistence(String taskName) async {
+    await loadData();
     int index = taskList.indexWhere((element) => element[0] == taskName);
     return index != -1;
   }
 
-  void deleteTask(String taskName) {
+  Future<void> deleteTask(String taskName) async {
     taskList.removeWhere((element) => element[0] == taskName);
-    saveData();
+    await saveData();
   }
 
-  List deleteTaskAtIndex(int index) {
-    saveData();
+  Future<List> deleteTaskAtIndex(int index) async {
+    await saveData();
     return taskList.removeAt(index);
   }
 
-  Future<void> uploadToServer() async {
-    var combinedStringList = [];
+  Future<void> uploadDataToServer() async {
+    List<String> combinedStringList = [];
 
-    for (var element in taskList) {
-      element[1] = element[1] ? "true" : "false";
-      combinedStringList.add(element.join("||"));
+    for (var taskData in taskList) {
+      List newTaskData = [taskData[0], ""];
+      newTaskData[1] = taskData[1] ? "true" : "false";
+      combinedStringList.add(newTaskData.join("||"));
     }
 
     String taskDataString = combinedStringList.join("|||");
-    final encryptionPass = await generate32CharEncryptionCode('monpss');
-    final encryptedData =  encryptTaskData(taskDataString, encryptionPass);
-    
-    await http.get(Uri.parse('https://sarimahmed.tech/sarim-s_todo_app/upload_task_data.php?username=sarim&hash=anewhash&task_data=${Uri.encodeComponent(encryptedData)}'));
-    
-    var result = await http.get(Uri.parse('https://sarimahmed.tech/sarim-s_todo_app/get_task_data.php?username=sarim&hash=anewhash'));
-    
+    final encryptedData =
+        encryptTaskData(taskDataString, getSessionEncryptionKey());
+
+    uploadEncryptedDataToServer(encryptedData);
+  }
+
+  Future<bool> getTaskDataFromServer() async {
+    // Get Data
+    final encryptedData = await fetchEncryptedDataFromServer();
+
+    if (encryptedData.isNotEmpty) {
+      // Decrypt Data
+      final decryptedData =
+          decryptTaskData(encryptedData, getSessionEncryptionKey());
+
+      // Verify Decrypted Data
+      if (verifyDecryptedData(decryptedData)) {
+        var combinedStringTaskData =
+            extractTaskData(decryptedData).split("|||");
+        taskList = [];
+
+        for (var element in combinedStringTaskData) {
+          List<dynamic> taskData = element.split("||");
+          String taskName = taskData[0];
+          bool completed = taskData[1] == "true";
+          taskList.add([taskName, completed]);
+        }
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> saveData() async {
+    await uploadDataToServer();
+    getTaskDataFromServer();
+    // saveDataToDevice();
+  }
+
+  Future<bool> loadData() async {
+    return await getTaskDataFromServer();
+
+    // saveDataToDevice();
+    // loadDataFromDevice();
   }
 }

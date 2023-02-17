@@ -24,7 +24,7 @@ String encryptTaskData(String taskData, String encryptKey) {
   final fernet = Fernet(b64key);
   final encrypter = Encrypter(fernet);
 
-  return encrypter.encrypt(taskData).base64;
+  return encrypter.encrypt("${taskData}ENCRYPTED_TASK_DATA").base64;
 }
 
 String decryptTaskData(String encryptedTaskData, String encryptKey) {
@@ -32,6 +32,16 @@ String decryptTaskData(String encryptedTaskData, String encryptKey) {
   final b64key = Key.fromBase64(base64Url.encode(key.bytes));
   final fernet = Fernet(b64key);
   final encrypter = Encrypter(fernet);
-
   return encrypter.decrypt(Encrypted.fromBase64(encryptedTaskData));
+}
+
+bool verifyDecryptedData(String decryptedTaskData) {
+  return decryptedTaskData
+          .substring(decryptedTaskData.length - "ENCRYPTED_TASK_DATA".length) ==
+      "ENCRYPTED_TASK_DATA";
+}
+
+String extractTaskData(String decryptedTaskData) {
+  return decryptedTaskData.substring(
+      0, decryptedTaskData.length - "ENCRYPTED_TASK_DATA".length);
 }
