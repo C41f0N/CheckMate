@@ -52,7 +52,7 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
             ),
             ElevatedButton(
               onPressed: () async {
-                if (!await widget
+                if (!widget
                     .checkTaskExistenceCallback(taskNameController.text)) {
                   if (taskNameController.text != '') {
                     widget.addTaskCallback(taskNameController.text);

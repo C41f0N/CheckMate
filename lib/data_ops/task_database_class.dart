@@ -8,6 +8,7 @@ class TaskDatabase {
   final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
 
   void createDefaultData() {
+    print("Creating default data");
     taskList = [
       ["Clean Car", true],
       ["Kill Sarim", false],
@@ -43,7 +44,7 @@ class TaskDatabase {
     }
 
     _myBox.put("TASKS_LIST", combinedStringList);
-    uploadDataToServer();
+    // uploadDataToServer();
   }
 
   void changeCompleteStatus(String taskName) {
@@ -88,10 +89,13 @@ class TaskDatabase {
     }
 
     String taskDataString = combinedStringList.join("|||");
-    final encryptedData =
-        encryptTaskData(taskDataString, getSessionEncryptionKey());
-
-    return await uploadEncryptedDataToServer(encryptedData);
+    if (getSessionEncryptionKey().isNotEmpty) {
+      final encryptedData =
+          encryptTaskData(taskDataString, getSessionEncryptionKey());
+      return await uploadEncryptedDataToServer(encryptedData);
+    } else {
+      return false;
+    }
   }
 
   Future<bool> getTaskDataFromServer() async {
@@ -99,29 +103,36 @@ class TaskDatabase {
     final encryptedData = await fetchEncryptedDataFromServer();
 
     if (encryptedData.isNotEmpty && getSessionEncryptionKey().isNotEmpty) {
-      // Decrypt Data
-      final decryptedData =
-          decryptTaskData(encryptedData, getSessionEncryptionKey());
+      if (encryptedData != "NULL") {
+        // Decrypt Data
+        final decryptedData =
+            decryptTaskData(encryptedData, getSessionEncryptionKey());
+        // Verify Decrypted Data
+        if (verifyDecryptedData(decryptedData)) {
+          // print(decryptedData);
+          var combinedStringTaskData =
+              extractTaskData(decryptedData).split("|||");
+          taskList = [];
 
-      // Verify Decrypted Data
-      if (verifyDecryptedData(decryptedData)) {
-        var combinedStringTaskData =
-            extractTaskData(decryptedData).split("|||");
-        taskList = [];
-
-        for (var element in combinedStringTaskData) {
-          List<dynamic> taskData = element.split("||");
-          String taskName = taskData[0];
-          bool completed = taskData[1] == "true";
-          taskList.add([taskName, completed]);
+          for (var element in combinedStringTaskData) {
+            List<dynamic> taskData = element.split("||");
+            String taskName = taskData[0];
+            bool completed = taskData[1] == "true";
+            taskList.add([taskName, completed]);
+          }
+          saveData();
+          return true;
+        } else {
+          return false;
         }
-        return true;
       } else {
-        return false;
+        print("Creating new data for new user.");
+        loadData();
+        // return await uploadDataToServer();
+        return true;
       }
     } else {
       return false;
     }
   }
-
 }

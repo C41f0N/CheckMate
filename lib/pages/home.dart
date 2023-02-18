@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/widgets/task_card.dart';
 import '../data_ops/user_session_local_ops.dart';
@@ -22,31 +19,41 @@ class _HomePageState extends State<HomePage> {
   DateTime nextUpdateAt = DateTime.now().add(const Duration(seconds: 5));
   Timer? timer;
   bool? serverNeedstoBeUpdated;
+  bool localDataNeedsToBeUpdated = true;
+  int serverCount = 0;
 
   @override
   void initState() {
-    if (_myBox.get("TASKS_LIST") == null) {
-      db.createDefaultData();
-    }
+    fetchDataFromServer();
 
     if (_myBox.get("SERVER_UPDATE_NEEDED") == null) {
       _myBox.put("SERVER_UPDATE_NEEDED", false);
     }
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      if (!DateTime.now().isBefore(nextUpdateAt)) {
-        if (checkServerUpdateAppointmentStatus()) {
+      final appointmentStatus = _myBox.get("SERVER_UPDATE_NEEDED") ?? false;
+      print("Appointment with server => $appointmentStatus");
+      if (timer.isActive &&
+          (DateTime.now().isAfter(nextUpdateAt) ||
+              DateTime.now().isAtSameMomentAs(nextUpdateAt))) {
+        print(serverCount);
+        serverCount++;
+        if (appointmentStatus) {
           // if there has been new changes then upload data
+          print("Uploading Data");
           if (await db.uploadDataToServer()) {
             setUpdateAppointmentWithServerStatus(false);
           }
         } else {
           print("Fetching data");
           // else download data and update it
-          await db.getTaskDataFromServer();
-          setState(() {});
+          if (!localDataNeedsToBeUpdated) {
+            await db.getTaskDataFromServer();
+            setState(() {});
+          }
         }
-        nextUpdateAt = DateTime.now().add(const Duration(seconds: 3));
+
+        nextUpdateAt = DateTime.now().add(const Duration(seconds: 5));
       }
     });
     super.initState();
@@ -62,163 +69,246 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    db.loadData();
-    var taskList = db.taskList;
-    return StreamBuilder(
-        stream: InternetConnectivity().observeInternetConnection,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<Widget> taskDisplayList = [
-                  snapshot.data!
-                      ? const SizedBox(
-                          height: 0,
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                              color: Colors.redAccent[700]!.withAlpha(200),
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.zero,
-                                topRight: Radius.zero,
-                                bottomLeft: Radius.circular(4),
-                                bottomRight: Radius.circular(4),
-                              )),
-                          height: 50,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Icon(Icons
-                                  .signal_wifi_connected_no_internet_4_rounded),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Text(
-                                "You are not connected to the internet.",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
+    if (localDataNeedsToBeUpdated) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("T O D O   L I S T"),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  reorderMode = !reorderMode;
+                });
+              },
+              icon: reorderMode
+                  ? const Icon(Icons.check)
+                  : const Icon(Icons.reorder),
+            ),
+            IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: ((context) => AlertDialog(
+                        title: const Text(
+                          "Are you sure you want to log out?",
+                          style: TextStyle(color: Colors.white),
                         ),
-                  const SizedBox(
-                    height: 6,
-                  )
-                ] +
-                taskList.map((taskData) {
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (checkServerUpdateAppointmentStatus()) {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                    context: context,
+                                    builder: ((context) => AlertDialog(
+                                          title: const Text(
+                                            "Are you sure? There is still some data not yet written to the cloud, we advise waiting some seconds.",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: logout,
+                                              child: const Text("Yes"),
+                                            ),
+                                            TextButton(
+                                              onPressed: (() =>
+                                                  Navigator.pop(context)),
+                                              child: const Text("No"),
+                                            ),
+                                          ],
+                                        )));
+                              } else {
+                                logout();
+                              }
+                            },
+                            child: const Text("Yes"),
+                          ),
+                          TextButton(
+                            onPressed: (() => Navigator.pop(context)),
+                            child: const Text("No"),
+                          )
+                        ],
+                      )),
+                );
+              },
+              icon: const Icon(Icons.logout),
+            ),
+          ],
+        ),
+        body: FutureBuilder(
+            future: db.getTaskDataFromServer(),
+            builder: (context, snapshot) {
+              localDataNeedsToBeUpdated = false;
+
+              var taskList = db.taskList;
+              List<Widget> taskDisplayList = taskList.map((taskData) {
+                return TaskCard(
+                    taskName: taskData[0],
+                    completed: taskData[1],
+                    onTaskCheckChange: onTaskCheckChange,
+                    onDelete: deleteTask,
+                    reorderingMode: reorderMode);
+              }).toList();
+
+              if (snapshot.hasData) {
+                return reorderMode
+                    ? ReorderableListView.builder(
+                        padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                        itemCount: taskList.length,
+                        itemBuilder: (context, index) {
+                          return TaskCard(
+                            key: UniqueKey(),
+                            taskName: taskList[index][0],
+                            completed: taskList[index][1],
+                            onTaskCheckChange: onTaskCheckChange,
+                            onDelete: deleteTask,
+                            reorderingMode: reorderMode,
+                          );
+                        },
+                        onReorder: onReorder,
+                      )
+                    : ListView(
+                        padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                        clipBehavior: Clip.antiAlias,
+                        children: taskDisplayList,
+                      );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            }),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: ((_) {
+                return AddTaskDialogue(
+                  addTaskCallback: addTask,
+                  checkTaskExistenceCallback: checkTaskExistence,
+                );
+              }),
+            );
+          },
+        ),
+      );
+    } else {
+      db.loadData();
+      var taskList = db.taskList;
+      List<Widget> taskDisplayList = taskList.map((taskData) {
+        return TaskCard(
+            taskName: taskData[0],
+            completed: taskData[1],
+            onTaskCheckChange: onTaskCheckChange,
+            onDelete: deleteTask,
+            reorderingMode: reorderMode);
+      }).toList();
+
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("T O D O   L I S T"),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  reorderMode = !reorderMode;
+                });
+              },
+              icon: reorderMode
+                  ? const Icon(Icons.check)
+                  : const Icon(Icons.reorder),
+            ),
+            IconButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: ((context) => AlertDialog(
+                        title: const Text(
+                          "Are you sure you want to log out?",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        actions: [
+                          ElevatedButton(
+                            onPressed: () {
+                              if (checkServerUpdateAppointmentStatus()) {
+                                Navigator.of(context).pop();
+                                showDialog(
+                                    context: context,
+                                    builder: ((context) => AlertDialog(
+                                          title: const Text(
+                                            "Are you sure? There is still some data not yet written to the cloud, we advise waiting some seconds.",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: logout,
+                                              child: const Text("Yes"),
+                                            ),
+                                            TextButton(
+                                              onPressed: (() =>
+                                                  Navigator.pop(context)),
+                                              child: const Text("No"),
+                                            ),
+                                          ],
+                                        )));
+                              } else {
+                                logout();
+                              }
+                            },
+                            child: const Text("Yes"),
+                          ),
+                          TextButton(
+                            onPressed: (() => Navigator.pop(context)),
+                            child: const Text("No"),
+                          )
+                        ],
+                      )),
+                );
+              },
+              icon: const Icon(Icons.logout),
+            ),
+          ],
+        ),
+        body: reorderMode
+            ? ReorderableListView.builder(
+                padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                itemCount: taskList.length,
+                itemBuilder: (context, index) {
                   return TaskCard(
-                      taskName: taskData[0],
-                      completed: taskData[1],
-                      onTaskCheckChange: onTaskCheckChange,
-                      onDelete: deleteTask,
-                      reorderingMode: reorderMode);
-                }).toList();
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text("T O D O   L I S T"),
-                centerTitle: true,
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        reorderMode = !reorderMode;
-                      });
-                    },
-                    icon: reorderMode
-                        ? const Icon(Icons.check)
-                        : const Icon(Icons.reorder),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: ((context) => AlertDialog(
-                              title: const Text(
-                                "Are you sure you want to log out?",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (checkServerUpdateAppointmentStatus()) {
-                                      Navigator.of(context).pop();
-                                      showDialog(
-                                          context: context,
-                                          builder: ((context) => AlertDialog(
-                                                title: const Text(
-                                                  "Are you sure? There is still some data not yet written to the cloud, we advise waiting some seconds.",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                                actions: [
-                                                  ElevatedButton(
-                                                    onPressed: logout,
-                                                    child: const Text("Yes"),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: (() =>
-                                                        Navigator.pop(context)),
-                                                    child: const Text("No"),
-                                                  ),
-                                                ],
-                                              )));
-                                    } else {
-                                      logout();
-                                    }
-                                  },
-                                  child: const Text("Yes"),
-                                ),
-                                TextButton(
-                                  onPressed: (() => Navigator.pop(context)),
-                                  child: const Text("No"),
-                                )
-                              ],
-                            )),
-                      );
-                    },
-                    icon: const Icon(Icons.logout),
-                  ),
-                ],
-              ),
-              body: reorderMode
-                  ? ReorderableListView.builder(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 6),
-                      itemCount: taskList.length,
-                      itemBuilder: (context, index) {
-                        return TaskCard(
-                          key: UniqueKey(),
-                          taskName: taskList[index][0],
-                          completed: taskList[index][1],
-                          onTaskCheckChange: onTaskCheckChange,
-                          onDelete: deleteTask,
-                          reorderingMode: reorderMode,
-                        );
-                      },
-                      onReorder: onReorder,
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 6),
-                      clipBehavior: Clip.antiAlias,
-                      children: taskDisplayList,
-                    ),
-              floatingActionButton: FloatingActionButton(
-                child: const Icon(Icons.add),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: ((_) {
-                      return AddTaskDialogue(
-                        addTaskCallback: addTask,
-                        checkTaskExistenceCallback: checkTaskExistence,
-                      );
-                    }),
+                    key: UniqueKey(),
+                    taskName: taskList[index][0],
+                    completed: taskList[index][1],
+                    onTaskCheckChange: onTaskCheckChange,
+                    onDelete: deleteTask,
+                    reorderingMode: reorderMode,
                   );
                 },
+                onReorder: onReorder,
+              )
+            : ListView(
+                padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                clipBehavior: Clip.antiAlias,
+                children: taskDisplayList,
               ),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: ((_) {
+                return AddTaskDialogue(
+                  addTaskCallback: addTask,
+                  checkTaskExistenceCallback: checkTaskExistence,
+                );
+              }),
             );
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+          },
+        ),
+      );
+    }
   }
 
   void onTaskCheckChange(String taskName, bool completed) {
@@ -292,6 +382,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool checkServerUpdateAppointmentStatus() {
-    return _myBox.get("SERVER_UPDATE_NEEDED") ?? false;
+    final result =_myBox.get("SERVER_UPDATE_NEEDED");
+    if (result != null) {
+      return result;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> fetchDataFromServer() async {
+    await db.getTaskDataFromServer();
   }
 }

@@ -6,7 +6,7 @@ Future<String> hashPass(String passcode) async {
   final message = passcode.codeUnits;
   final algorithm = Sha512();
   final hash = await algorithm.hash(message);
-  return String.fromCharCodes(hash.bytes);
+  return hash.bytes.join("|");
 }
 
 Future<String> generate32CharEncryptionCode(passcode) async {
@@ -24,7 +24,7 @@ String encryptTaskData(String taskData, String encryptKey) {
   final fernet = Fernet(b64key);
   final encrypter = Encrypter(fernet);
 
-  return encrypter.encrypt("${taskData}ENCRYPTED_TASK_DATA").base64;
+  return encrypter.encrypt("${taskData}ENCRYPTED_TASK_DATA").base64.codeUnits.join("|");
 }
 
 String decryptTaskData(String encryptedTaskData, String encryptKey) {
@@ -32,7 +32,7 @@ String decryptTaskData(String encryptedTaskData, String encryptKey) {
   final b64key = Key.fromBase64(base64Url.encode(key.bytes));
   final fernet = Fernet(b64key);
   final encrypter = Encrypter(fernet);
-  return encrypter.decrypt(Encrypted.fromBase64(encryptedTaskData));
+  return encrypter.decrypt(Encrypted.fromBase64(String.fromCharCodes(encryptedTaskData.split("|").map((e) => int.parse(e)))));
 }
 
 bool verifyDecryptedData(String decryptedTaskData) {

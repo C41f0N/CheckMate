@@ -44,6 +44,7 @@ dependencies:
   cryptography: ^2.0.5
   url_encoder: ^0.0.3
   observe_internet_connectivity: ^1.0.2
+  connectivity_plus: ^0.0.1
 
 dev_dependencies:
   flutter_test:

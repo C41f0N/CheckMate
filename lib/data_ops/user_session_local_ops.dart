@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sarims_todo_app/data_ops/encryption.dart';
 
 final _myBox = Hive.box("USER_SESSION_DATA");
+final _taskDbBox = Hive.box("TASKS_LOCAL_DATABASE");
 
 void setLoginStatus(bool loggedIn) {
   _myBox.put("LOGGED_IN", loggedIn);
@@ -53,4 +54,7 @@ void removeLoginInfoFromDevice() {
 
   // Clear any planned upload events for future
   _myBox.put("SERVER_UPDATE_NEEDED", false);
+
+  // Delete any existing tasks stored on device
+  _taskDbBox.put("TASKS_LIST", null);
 }

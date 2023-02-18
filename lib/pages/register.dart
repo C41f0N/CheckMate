@@ -20,224 +20,185 @@ class _RegisterPageState extends State<RegisterPage> {
       TextEditingController();
   String? usernameError;
   String? passwordError;
-  String? reEnterPasswordError;
   bool processing = false;
   bool hidePassword = true;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: InternetConnectivity().observeInternetConnection,
-        builder: (context, connection) {
-          if (connection.hasData) {
-            return Scaffold(
-              body: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.24,
-                      ),
+    return Scaffold(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.24,
+              ),
 
-                      // Register Title
-                      Text(
-                        "Register",
-                        style: TextStyle(
-                          fontSize: 35,
-                          color: Colors.grey[200],
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
+              // Register Title
+              Text(
+                "Register",
+                style: TextStyle(
+                  fontSize: 35,
+                  color: Colors.grey[200],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
 
-                      // Username Input Field
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8 > 320
-                            ? 320
-                            : MediaQuery.of(context).size.width * 0.8,
-                        child: TextField(
-                          enabled: connection.data! && !processing,
-                          controller: usernameController,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            errorText: usernameError,
-                            label: const Text("Username"),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-
-                      // Password Input Field
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8 > 320
-                            ? 320
-                            : MediaQuery.of(context).size.width * 0.8,
-                        child: TextField(
-                          obscureText:
-                              hidePassword || processing || !connection.data!,
-                          enabled: connection.data! && !processing,
-                          controller: passwordController,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            errorText: passwordError,
-                            label: const Text("Password"),
-                            suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    hidePassword = !hidePassword;
-                                  });
-                                },
-                                splashRadius: 5,
-                                icon: Icon(
-                                  hidePassword
-                                      ? Icons.remove_red_eye
-                                      : Icons.shield_outlined,
-                                  color: Colors.grey[600],
-                                )),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8 > 320
-                            ? 320
-                            : MediaQuery.of(context).size.width * 0.8,
-                        child: TextField(
-                          obscureText:
-                              hidePassword || processing || !connection.data!,
-                          enabled: connection.data! && !processing,
-                          controller: reEnterPasswordController,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            errorText: reEnterPasswordError,
-                            label: const Text("Retype Password"),
-                            suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    hidePassword = !hidePassword;
-                                  });
-                                },
-                                splashRadius: 5,
-                                icon: Icon(
-                                  hidePassword
-                                      ? Icons.remove_red_eye
-                                      : Icons.shield_outlined,
-                                  color: Colors.grey[600],
-                                )),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-
-                      // Register Button if connected, else warning message
-                      connection.data!
-                          ? GestureDetector(
-                              onTap: !processing &&
-                                      (passwordController.text.isNotEmpty &&
-                                          usernameController.text.isNotEmpty)
-                                  ? register
-                                  : () {},
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                alignment: Alignment.center,
-                                height: 55,
-                                width: MediaQuery.of(context).size.width * 0.8 >
-                                        320
-                                    ? 320
-                                    : MediaQuery.of(context).size.width * 0.8,
-                                child: const Text(
-                                  'Register',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                color: Colors.redAccent[700]!.withAlpha(230),
-                              ),
-                              alignment: Alignment.center,
-                              height: 55,
-                              width:
-                                  MediaQuery.of(context).size.width * 0.8 > 320
-                                      ? 320
-                                      : MediaQuery.of(context).size.width * 0.8,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: const [
-                                  Icon(Icons
-                                      .signal_wifi_connected_no_internet_4_rounded),
-                                  Text(
-                                    "No internet connection :(",
-                                  ),
-                                  SizedBox(),
-                                ],
-                              ),
-                            ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.2),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Already have an account?",
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          GestureDetector(
-                            onTap: (() {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: ((context) =>
-                                          const LoginPage())));
-                            }),
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                          )
-                        ],
-                      )
-                    ],
+              // Username Input Field
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8 > 320
+                    ? 320
+                    : MediaQuery.of(context).size.width * 0.8,
+                child: TextField(
+                  enabled: !processing,
+                  controller: usernameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    errorText: usernameError,
+                    label: const Text("Username"),
                   ),
                 ),
               ),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+              const SizedBox(
+                height: 10,
+              ),
+
+              // Password Input Field
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8 > 320
+                    ? 320
+                    : MediaQuery.of(context).size.width * 0.8,
+                child: TextField(
+                  obscureText: hidePassword || processing,
+                  enabled: !processing,
+                  controller: passwordController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    errorText: passwordError,
+                    label: const Text("Password"),
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            hidePassword = !hidePassword;
+                          });
+                        },
+                        splashRadius: 5,
+                        icon: Icon(
+                          hidePassword
+                              ? Icons.remove_red_eye
+                              : Icons.shield_outlined,
+                          color: Colors.grey[600],
+                        )),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8 > 320
+                    ? 320
+                    : MediaQuery.of(context).size.width * 0.8,
+                child: TextField(
+                  obscureText: hidePassword || processing,
+                  enabled: !processing,
+                  controller: reEnterPasswordController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    errorText: passwordError,
+                    label: const Text("Retype Password"),
+                    suffixIcon: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            hidePassword = !hidePassword;
+                          });
+                        },
+                        splashRadius: 5,
+                        icon: Icon(
+                          hidePassword
+                              ? Icons.remove_red_eye
+                              : Icons.shield_outlined,
+                          color: Colors.grey[600],
+                        )),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+
+              // Register Button
+              GestureDetector(
+                onTap: !processing &&
+                        (passwordController.text.isNotEmpty &&
+                            usernameController.text.isNotEmpty)
+                    ? register
+                    : () {},
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  alignment: Alignment.center,
+                  height: 55,
+                  width: MediaQuery.of(context).size.width * 0.8 > 320
+                      ? 320
+                      : MediaQuery.of(context).size.width * 0.8,
+                  child: const Text(
+                    'Register',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Already have an account?",
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  GestureDetector(
+                    onTap: (() {
+                      Navigator.pop(context);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: ((context) => const LoginPage())));
+                    }),
+                    child: Text(
+                      "Login",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   // Register Function
 
   Future<void> register() async {
-    bool usernameValid = false;
-    bool passwordVerified = false;
-    bool registerSuccessful = false;
+    bool? usernameValid;
+    bool? passwordVerified;
+    bool? registerSuccessful;
+
+    passwordError = null;
 
     //set status to: processing data
     setState(() {
@@ -269,36 +230,45 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     // Check if username is valid
-    if (!await verifyUsername(usernameController.text)) {
-      usernameError = null;
-      usernameValid = true;
-    } else {
-      usernameValid = false;
-      usernameError = "Username already exists.";
-    }
-
-    if (usernameValid) {
-      // Check if the passwords match
-      if (passwordController.text == reEnterPasswordController.text) {
-        passwordVerified = true;
-        setState(() {
-          passwordError = null;
-          reEnterPasswordError = null;
-        });
-
-        // Register User
-        if (await registerUser(
-            usernameController.text, passwordController.text)) {
-          registerSuccessful = true;
-          passwordError = null;
-        } else {
-          registerSuccessful = false;
-        }
+    final usernameResult = await verifyUsername(usernameController.text);
+    if (usernameResult != "ERROR") {
+      if (usernameResult == "0") {
+        usernameError = null;
+        usernameValid = true;
       } else {
-        setState(() {
-          passwordError = "Passwords do not match";
-          reEnterPasswordError = "Passwords do not match";
-        });
+        usernameValid = false;
+        usernameError = "Username already exists.";
+        registerSuccessful = false;
+      }
+
+      if (usernameValid) {
+        // Check if the passwords match
+        if (passwordController.text == reEnterPasswordController.text) {
+          passwordVerified = true;
+          setState(() {
+            passwordError = null;
+          });
+
+          final registerUserResult = await registerUser(
+              usernameController.text, passwordController.text);
+          print(registerUserResult);
+          // Check if there was an error
+          if (registerUserResult != "ERROR") {
+            // Register User
+            if (registerUserResult == "1") {
+              registerSuccessful = true;
+              passwordError = null;
+            } else {
+              registerSuccessful = false;
+            }
+          }
+        } else {
+          setState(() {
+            passwordError = "Passwords do not match";
+            passwordVerified = false;
+            registerSuccessful = false;
+          });
+        }
       }
     }
 
@@ -310,17 +280,41 @@ class _RegisterPageState extends State<RegisterPage> {
       processing = false;
     });
 
-    if (!registerSuccessful && passwordVerified && usernameValid) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("An error occoured. Try Again.")));
-    }
+    if (registerSuccessful != null &&
+        usernameValid != null &&
+        passwordVerified != null) {
+      if (!registerSuccessful! && passwordVerified! && usernameValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("An error occoured. Try Again.")));
+      }
 
-    if (usernameValid && registerSuccessful) {
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content:
-              Text("Register Successful! You can log into your account.")));
+      if (usernameValid && registerSuccessful!) {
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content:
+                Text("Register Successful! You can log into your account.")));
+      }
+    } else {
+      print("$usernameValid , $registerSuccessful , $passwordVerified");
+      showDialog(
+        context: context,
+        builder: ((context) => AlertDialog(
+              title: const Text(
+                "There was a problem connecting to the server.",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                    onPressed: (() {
+                      Navigator.pop(context);
+                    }),
+                    child: const Text("Okay"))
+              ],
+            )),
+      );
     }
   }
 }
