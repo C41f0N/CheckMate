@@ -17,7 +17,7 @@ class TaskDatabase {
     ];
   }
 
-  void loadData() {
+  bool loadData() {
     if (_myBox.get("TASKS_LIST") == null) {
       // Create defaults and save
       createDefaultData();
@@ -33,6 +33,7 @@ class TaskDatabase {
         taskList.add([taskName, completed]);
       }
     }
+    return true;
   }
 
   void saveData() {

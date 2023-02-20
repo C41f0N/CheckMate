@@ -8,7 +8,6 @@ Future<String> fetchEncryptedDataFromServer() async {
   final hash = getSessionPasswordHash();
 
   // Fetch raw data from server
-  print("Trying to fetch data");
   try {
     final result = await http.get(Uri.parse(
         'https://sarimahmed.tech/sarim-s_todo_app/get_task_data.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}'));
@@ -24,7 +23,6 @@ Future<bool> uploadEncryptedDataToServer(encryptedData) async {
   final hash = getSessionPasswordHash();
 
   // Upload data to server
-  print("Trying to upload data");
   try {
     final result = await http.get(Uri.parse(
         'https://sarimahmed.tech/sarim-s_todo_app/upload_task_data.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}&task_data=${Uri.encodeComponent(encryptedData)}'));

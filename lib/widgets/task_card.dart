@@ -30,7 +30,7 @@ class TaskCard extends StatelessWidget {
         onSwiped: ((direction) {
           onDelete(taskName);
         }),
-        borderRadius: 10,
+        borderRadius: 4,
         swipeThreshold: 0.2,
         key: UniqueKey(),
         direction: SwipeDirection.startToEnd,
@@ -38,7 +38,7 @@ class TaskCard extends StatelessWidget {
           if (direction == SwipeDirection.startToEnd) {
             return Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(4),
                 color: const Color.fromARGB(255, 255, 17, 0),
               ),
               child: Row(
