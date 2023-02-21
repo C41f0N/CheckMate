@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:sarims_todo_app/data_ops/encryption.dart';
+import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
 
 // Function to verify username
 Future<String> verifyUsername(String username) async {
@@ -49,5 +50,22 @@ Future<String> registerUser(String username, String password) async {
     }
   } on Exception catch (_) {
     return "ERROR";
+  }
+}
+
+Future<bool> changePasswordOnServer(String newPassword) async {
+  final username = getSessionUsername();
+  final newHash = await hashPass(newPassword);
+
+  try {
+    var result = await http.get(Uri.parse(
+        'https://sarimahmed.tech/sarim-s_todo_app/change_pass.php?username=${Uri.encodeComponent(username)}&hash=asnewhash&new_hash=${Uri.encodeComponent(newHash)}'));
+    if ((result.statusCode / 100).floor() == 2) {
+      return result.body == "1";
+    } else {
+      return false;
+    }
+  } on Exception catch (_) {
+    return false;
   }
 }
