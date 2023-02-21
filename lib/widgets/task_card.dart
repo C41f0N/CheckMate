@@ -36,6 +36,10 @@ class TaskCard extends StatelessWidget {
           motion: const ScrollMotion(),
           children: [
             SlidableAction(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4),
+                bottomLeft: Radius.circular(4),
+              ),
               backgroundColor: Colors.redAccent,
               icon: Icons.delete,
               onPressed: onDeleteWithContext,

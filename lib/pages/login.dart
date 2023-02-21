@@ -24,134 +24,163 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.28,
-              ),
+      body: StreamBuilder(
+          stream: InternetConnectivity().observeInternetConnection,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              bool hasConnection = snapshot.data!;
+              return Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.28,
+                      ),
 
-              // Login Title
-              Text(
-                "Login",
-                style: TextStyle(
-                  fontSize: 35,
-                  color: Colors.grey[200],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
+                      // Login Title
+                      Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 35,
+                          color: Colors.grey[200],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
 
-              // Username Input Field
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8 > 320
-                    ? 320
-                    : MediaQuery.of(context).size.width * 0.8,
-                child: TextField(
-                  enabled: !processing,
-                  controller: usernameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    errorText: usernameError,
-                    label: const Text("Username"),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
+                      // Username Input Field
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          enabled: !processing && hasConnection,
+                          controller: usernameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            errorText: usernameError,
+                            label: const Text("Username"),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
 
-              // Password Input Field
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8 > 320
-                    ? 320
-                    : MediaQuery.of(context).size.width * 0.8,
-                child: TextField(
-                  obscureText: hidePassword || processing,
-                  enabled: !processing,
-                  controller: passwordController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    errorText: passwordError,
-                    label: const Text("Password"),
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            hidePassword = !hidePassword;
-                          });
-                        },
-                        splashRadius: 5,
-                        icon: Icon(
-                          hidePassword
-                              ? Icons.remove_red_eye
-                              : Icons.shield_outlined,
-                          color: Colors.grey[600],
-                        )),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
+                      // Password Input Field
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          obscureText: hidePassword || processing || !hasConnection,
+                          enabled: !processing && hasConnection,
+                          controller: passwordController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            errorText: passwordError,
+                            label: const Text("Password"),
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    hidePassword = !hidePassword;
+                                  });
+                                },
+                                splashRadius: 5,
+                                icon: Icon(
+                                  hidePassword
+                                      ? Icons.remove_red_eye
+                                      : Icons.shield_outlined,
+                                  color: Colors.grey[600],
+                                )),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
 
-              // Login Button if connected, else warning message
-              GestureDetector(
-                onTap: !processing &&
-                        (passwordController.text.isNotEmpty &&
-                            usernameController.text.isNotEmpty)
-                    ? login
-                    : () {},
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  alignment: Alignment.center,
-                  height: 55,
-                  width: MediaQuery.of(context).size.width * 0.8 > 320
-                      ? 320
-                      : MediaQuery.of(context).size.width * 0.8,
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(color: Colors.white),
+                      // Login Button if connected, else warning message
+                      GestureDetector(
+                        onTap: !processing &&
+                                hasConnection &&
+                                (passwordController.text.isNotEmpty &&
+                                    usernameController.text.isNotEmpty)
+                            ? login
+                            : () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: hasConnection
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.red[900],
+                          ),
+                          alignment: Alignment.center,
+                          height: 55,
+                          width: MediaQuery.of(context).size.width * 0.8 > 320
+                              ? 320
+                              : MediaQuery.of(context).size.width * 0.8,
+                          child: hasConnection
+                              ? const Text(
+                                  'Login',
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.signal_wifi_statusbar_connected_no_internet_4_rounded),
+                                    SizedBox(width: 15,),
+                                    Text(
+                                      "No Internet Connection :(",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.23),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "First time?",
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          GestureDetector(
+                            onTap: (() {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(context, "/register");
+                            }),
+                            child: Text(
+                              "Register",
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.23),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "First time?",
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  GestureDetector(
-                    onTap: (() {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, "/register");
-                    }),
-                    child: Text(
-                      "Register",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 
@@ -168,8 +197,8 @@ class _LoginPageState extends State<LoginPage> {
 
     // Show loading Dialog
     showDialog(
-        // barrierDismissible: false,
         context: context,
+        barrierDismissible: false,
         builder: ((context) => AlertDialog(
               content: SizedBox(
                 height: 100,

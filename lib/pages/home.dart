@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
+import 'package:sarims_todo_app/widgets/no_internet_indicator.dart';
 import 'package:sarims_todo_app/widgets/refreshing_data_indicator.dart';
 import 'package:sarims_todo_app/widgets/task_card.dart';
 import '../data_ops/user_session_local_ops.dart';
@@ -63,9 +65,10 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             onPressed: () {
+              if (!isUploading && !isRefreshing) {
               setState(() {
                 reorderMode = !reorderMode;
-              });
+              });}
             },
             icon: reorderMode
                 ? const Icon(Icons.check)
@@ -82,6 +85,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       actions: [
                         ElevatedButton(
+                          
                           onPressed: () {
                             if (checkServerUpdateAppointmentStatus()) {
                               Navigator.of(context).pop();
@@ -89,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                                   context: context,
                                   builder: ((context) => AlertDialog(
                                         title: const Text(
-                                          "Are you sure? There is still some data not yet written to the cloud, we advise waiting some seconds.",
+                                          "Are you sure? There is still some data not yet written to the cloud, we advise refreshing the list first.",
                                           style: TextStyle(color: Colors.white),
                                         ),
                                         actions: [
@@ -122,77 +126,93 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Stack(
-        alignment: AlignmentDirectional.topStart,
-        children: [
-          FutureBuilder(
-              future: isFirstUpdate
-                  ? db.getTaskDataFromServer()
-                  : Future.sync(() => db.loadData()),
-              builder: (context, snapshot) {
-                isFirstUpdate = false;
+      body: StreamBuilder(
+          stream: InternetConnectivity().observeInternetConnection,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              bool hasConnection = snapshot.data!;
+              return Stack(
+                alignment: AlignmentDirectional.topStart,
+                children: [
+                  FutureBuilder(
+                      future: isFirstUpdate
+                          ? db.getTaskDataFromServer()
+                          : Future.sync(() => db.loadData()),
+                      builder: (context, snapshot) {
+                        isFirstUpdate = false;
 
-                var taskList = db.taskList;
-                List<Widget> taskDisplayList = [
-                  SizedBox(
-                    height: isUploading || isRefreshing ? 30 : 0,
-                  ),
-                  ...taskList.map((taskData) {
-                    return TaskCard(
-                        taskName: taskData[0],
-                        completed: taskData[1],
-                        onTaskCheckChange: isRefreshing || isUploading
-                            ? () {}
-                            : onTaskCheckChange,
-                        onDelete:
-                            isRefreshing || isUploading ? () {} : deleteTask,
-                        reorderingMode: reorderMode);
-                  }).toList()
-                ];
-
-                if (snapshot.hasData) {
-                  return reorderMode
-                        ? ReorderableListView.builder(
-                            // buildDefaultDragHandles: true,
-                            padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
-                            itemCount: taskList.length,
-                            itemBuilder: (context, index) {
-                              return TaskCard(
-                                key: UniqueKey(),
-                                taskName: taskList[index][0],
-                                completed: taskList[index][1],
-                                onTaskCheckChange: onTaskCheckChange,
-                                onDelete: deleteTask,
-                                reorderingMode: reorderMode,
-                              );
-                            },
-                            onReorder: onReorder,
-                          )
-                        : RefreshIndicator(
-                    key: GlobalKey<RefreshIndicatorState>(),
-                    onRefresh: () async {
-                      nextUpdateAt = DateTime.now();
-                      return checkServerUpdateAppointmentStatus()
-                          ? await uploadTaskData()
-                          : await refreshTaskData();
-                    },
-                    child:  ListView(
-                            padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
-                            clipBehavior: Clip.antiAlias,
-                            children: taskDisplayList,
+                        var taskList = db.taskList;
+                        List<Widget> taskDisplayList = [
+                          SizedBox(
+                            height: isUploading || isRefreshing || !hasConnection ? 40 : 0,
                           ),
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              }),
-          isUploading
-              ? const UploadingDataIndicator()
-              : isRefreshing
-                  ? const RefreshingDataIndicator()
-                  : const SizedBox(),
-        ],
-      ),
+                          ...taskList.map((taskData) {
+                            return TaskCard(
+                                taskName: taskData[0],
+                                completed: taskData[1],
+                                onTaskCheckChange: isRefreshing || isUploading
+                                    ? () {}
+                                    : onTaskCheckChange,
+                                onDelete: isRefreshing || isUploading
+                                    ? () {}
+                                    : deleteTask,
+                                reorderingMode: reorderMode);
+                          }).toList()
+                        ];
+
+                        if (snapshot.hasData) {
+                          return reorderMode
+                              ? ReorderableListView.builder(
+                                header: SizedBox(height: hasConnection ? 0 : 40),
+                                  // buildDefaultDragHandles: true,
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                  itemCount: taskList.length,
+                                  itemBuilder: (context, index) {
+                                    return TaskCard(
+                                      key: UniqueKey(),
+                                      taskName: taskList[index][0],
+                                      completed: taskList[index][1],
+                                      onTaskCheckChange: onTaskCheckChange,
+                                      onDelete: deleteTask,
+                                      reorderingMode: reorderMode,
+                                    );
+                                  },
+                                  onReorder: onReorder,
+                                )
+                              : RefreshIndicator(
+                                  key: GlobalKey<RefreshIndicatorState>(),
+                                  onRefresh: () async {
+                                    nextUpdateAt = DateTime.now();
+                                    return checkServerUpdateAppointmentStatus()
+                                        ? await uploadTaskData()
+                                        : await refreshTaskData();
+                                  },
+                                  child: ListView(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                    clipBehavior: Clip.antiAlias,
+                                    children: taskDisplayList,
+                                  ),
+                                );
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      }),
+                      hasConnection ?
+                  isUploading
+                      ? const UploadingDataIndicator()
+                      : isRefreshing
+                          ? const RefreshingDataIndicator()
+                          : const SizedBox()
+                          : const NoInternetIndicator(),
+                ],
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator(),);
+            }
+          }),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
@@ -282,7 +302,7 @@ class _HomePageState extends State<HomePage> {
 
   void setUpdateAppointmentWithServerStatus(bool value) {
     if (value) {
-      nextUpdateAt = DateTime.now().add(Duration(seconds: 60));
+      nextUpdateAt = DateTime.now().add(const Duration(seconds: 10));
     }
     _myBox.put("SERVER_UPDATE_NEEDED", value);
   }
@@ -302,7 +322,7 @@ class _HomePageState extends State<HomePage> {
     });
     final uploadResult = await db.uploadDataToServer();
     if (uploadResult) {
-      nextUpdateAt = DateTime.now().add(const Duration(seconds: 60));
+      nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       setUpdateAppointmentWithServerStatus(false);
     }
     setState(() {
@@ -320,7 +340,7 @@ class _HomePageState extends State<HomePage> {
     });
     if (downloadResult) {
       print(nextUpdateAt);
-      nextUpdateAt = DateTime.now().add(const Duration(seconds: 60));
+      nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       db.loadData();
     }
   }

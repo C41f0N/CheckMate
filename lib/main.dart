@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           labelStyle: TextStyle(color: Colors.grey[400]),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.purple.withAlpha(170),
+              color: Colors.blueGrey.withAlpha(170),
               width: 2,
             ),
             borderRadius: BorderRadius.circular(5),

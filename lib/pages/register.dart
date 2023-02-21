@@ -26,168 +26,202 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.24,
-              ),
+      body: StreamBuilder(
+          stream: InternetConnectivity().observeInternetConnection,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              bool hasConnection = snapshot.data!;
+              return Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.24,
+                      ),
 
-              // Register Title
-              Text(
-                "Register",
-                style: TextStyle(
-                  fontSize: 35,
-                  color: Colors.grey[200],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
+                      // Register Title
+                      Text(
+                        "Register",
+                        style: TextStyle(
+                          fontSize: 35,
+                          color: Colors.grey[200],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
 
-              // Username Input Field
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8 > 320
-                    ? 320
-                    : MediaQuery.of(context).size.width * 0.8,
-                child: TextField(
-                  enabled: !processing,
-                  controller: usernameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    errorText: usernameError,
-                    label: const Text("Username"),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
+                      // Username Input Field
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          controller: usernameController,
+                          enabled: !processing && hasConnection,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            errorText: usernameError,
+                            label: const Text("Username"),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
 
-              // Password Input Field
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8 > 320
-                    ? 320
-                    : MediaQuery.of(context).size.width * 0.8,
-                child: TextField(
-                  obscureText: hidePassword || processing,
-                  enabled: !processing,
-                  controller: passwordController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    errorText: passwordError,
-                    label: const Text("Password"),
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            hidePassword = !hidePassword;
-                          });
-                        },
-                        splashRadius: 5,
-                        icon: Icon(
-                          hidePassword
-                              ? Icons.remove_red_eye
-                              : Icons.shield_outlined,
-                          color: Colors.grey[600],
-                        )),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8 > 320
-                    ? 320
-                    : MediaQuery.of(context).size.width * 0.8,
-                child: TextField(
-                  obscureText: hidePassword || processing,
-                  enabled: !processing,
-                  controller: reEnterPasswordController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    errorText: passwordError,
-                    label: const Text("Retype Password"),
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            hidePassword = !hidePassword;
-                          });
-                        },
-                        splashRadius: 5,
-                        icon: Icon(
-                          hidePassword
-                              ? Icons.remove_red_eye
-                              : Icons.shield_outlined,
-                          color: Colors.grey[600],
-                        )),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
+                      // Password Input Field
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          obscureText:
+                              hidePassword || processing || !hasConnection,
+                          enabled: !processing && hasConnection,
+                          controller: passwordController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            errorText: passwordError,
+                            label: const Text("Password"),
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    hidePassword = !hidePassword;
+                                  });
+                                },
+                                splashRadius: 5,
+                                icon: Icon(
+                                  hidePassword
+                                      ? Icons.remove_red_eye
+                                      : Icons.shield_outlined,
+                                  color: Colors.grey[600],
+                                )),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          obscureText:
+                              hidePassword || processing || !hasConnection,
+                          enabled: !processing && hasConnection,
+                          controller: reEnterPasswordController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            errorText: passwordError,
+                            label: const Text("Retype Password"),
+                            suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    hidePassword = !hidePassword;
+                                  });
+                                },
+                                splashRadius: 5,
+                                icon: Icon(
+                                  hidePassword
+                                      ? Icons.remove_red_eye
+                                      : Icons.shield_outlined,
+                                  color: Colors.grey[600],
+                                )),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
 
-              // Register Button
-              GestureDetector(
-                onTap: !processing &&
-                        (passwordController.text.isNotEmpty &&
-                            usernameController.text.isNotEmpty)
-                    ? register
-                    : () {},
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4),
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  alignment: Alignment.center,
-                  height: 55,
-                  width: MediaQuery.of(context).size.width * 0.8 > 320
-                      ? 320
-                      : MediaQuery.of(context).size.width * 0.8,
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
+                      // Register Button
+                      GestureDetector(
+                        onTap: !processing &&
+                                hasConnection &&
+                                (passwordController.text.isNotEmpty &&
+                                    usernameController.text.isNotEmpty)
+                            ? register
+                            : () {},
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4),
+                            color: hasConnection
+                                ? Theme.of(context).colorScheme.primary
+                                : Colors.red[900],
+                          ),
+                          alignment: Alignment.center,
+                          height: 55,
+                          width: MediaQuery.of(context).size.width * 0.8 > 320
+                              ? 320
+                              : MediaQuery.of(context).size.width * 0.8,
+                          child: hasConnection
+                              ? const Text(
+                                  'Register',
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons
+                                        .signal_wifi_statusbar_connected_no_internet_4_rounded),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      "No Internet Connection :(",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.2),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Already have an account?",
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          GestureDetector(
+                            onTap: (() {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: ((context) =>
+                                          const LoginPage())));
+                            }),
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Already have an account?",
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  GestureDetector(
-                    onTap: (() {
-                      Navigator.pop(context);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: ((context) => const LoginPage())));
-                    }),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 
@@ -295,26 +329,6 @@ class _RegisterPageState extends State<RegisterPage> {
             content:
                 Text("Register Successful! You can log into your account.")));
       }
-    } else {
-      print("$usernameValid , $registerSuccessful , $passwordVerified");
-      showDialog(
-        context: context,
-        builder: ((context) => AlertDialog(
-              title: const Text(
-                "There was a problem connecting to the server.",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              actions: [
-                ElevatedButton(
-                    onPressed: (() {
-                      Navigator.pop(context);
-                    }),
-                    child: const Text("Okay"))
-              ],
-            )),
-      );
     }
   }
 }
