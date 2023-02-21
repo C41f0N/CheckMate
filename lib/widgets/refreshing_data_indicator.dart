@@ -10,7 +10,7 @@ class RefreshingDataIndicator extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       height: 30,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withAlpha(200),
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(5),
             bottomRight: Radius.circular(5),

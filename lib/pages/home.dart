@@ -152,34 +152,36 @@ class _HomePageState extends State<HomePage> {
 
                 if (snapshot.hasData) {
                   return reorderMode
-                      ? ReorderableListView.builder(
-                          padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
-                          itemCount: taskList.length,
-                          itemBuilder: (context, index) {
-                            return TaskCard(
-                              key: UniqueKey(),
-                              taskName: taskList[index][0],
-                              completed: taskList[index][1],
-                              onTaskCheckChange: onTaskCheckChange,
-                              onDelete: deleteTask,
-                              reorderingMode: reorderMode,
-                            );
-                          },
-                          onReorder: onReorder,
-                        )
-                      : RefreshIndicator(
-                          onRefresh: () {
-                            nextUpdateAt = DateTime.now();
-                            return checkServerUpdateAppointmentStatus()
-                                ? uploadTaskData()
-                                : refreshTaskData();
-                          },
-                          child: ListView(
+                        ? ReorderableListView.builder(
+                            // buildDefaultDragHandles: true,
+                            padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                            itemCount: taskList.length,
+                            itemBuilder: (context, index) {
+                              return TaskCard(
+                                key: UniqueKey(),
+                                taskName: taskList[index][0],
+                                completed: taskList[index][1],
+                                onTaskCheckChange: onTaskCheckChange,
+                                onDelete: deleteTask,
+                                reorderingMode: reorderMode,
+                              );
+                            },
+                            onReorder: onReorder,
+                          )
+                        : RefreshIndicator(
+                    key: GlobalKey<RefreshIndicatorState>(),
+                    onRefresh: () async {
+                      nextUpdateAt = DateTime.now();
+                      return checkServerUpdateAppointmentStatus()
+                          ? await uploadTaskData()
+                          : await refreshTaskData();
+                    },
+                    child:  ListView(
                             padding: const EdgeInsets.fromLTRB(0, 6, 0, 0),
                             clipBehavior: Clip.antiAlias,
                             children: taskDisplayList,
                           ),
-                        );
+                  );
                 } else {
                   return const Center(child: CircularProgressIndicator());
                 }

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sarim\'s To-Do App',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
+        primarySwatch: Colors.blueGrey,
         scaffoldBackgroundColor: Colors.grey[900],
         dialogBackgroundColor: Colors.grey[900],
         inputDecorationTheme: InputDecorationTheme(

@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
 
 class TaskCard extends StatelessWidget {
@@ -17,6 +18,10 @@ class TaskCard extends StatelessWidget {
   final Function onDelete;
   final bool reorderingMode;
 
+  void onDeleteWithContext(BuildContext context) {
+    onDelete(taskName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,39 +31,17 @@ class TaskCard extends StatelessWidget {
         12.0,
         6,
       ),
-      child: SwipeableTile(
-        onSwiped: ((direction) {
-          onDelete(taskName);
-        }),
-        borderRadius: 4,
-        swipeThreshold: 0.2,
-        key: UniqueKey(),
-        direction: SwipeDirection.startToEnd,
-        backgroundBuilder: (context, direction, progress) {
-          if (direction == SwipeDirection.startToEnd) {
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: const Color.fromARGB(255, 255, 17, 0),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                  ),
-                  const Icon(
-                    Icons.delete,
-                    size: 30,
-                  )
-                ],
-              ),
-            );
-          } else {
-            return Container(color: Colors.blue);
-          }
-        },
-        color: Colors.white.withOpacity(0),
+      child: Slidable(
+        startActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              backgroundColor: Colors.redAccent,
+              icon: Icons.delete,
+              onPressed: onDeleteWithContext,
+            ),
+          ],
+        ),
         child: GestureDetector(
           onTap: () {
             if (!reorderingMode) {
@@ -76,7 +59,7 @@ class TaskCard extends StatelessWidget {
                   : reorderingMode
                       ? Theme.of(context).colorScheme.secondary.withOpacity(0.7)
                       : Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(4),
             ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -84,7 +67,7 @@ class TaskCard extends StatelessWidget {
                 children: [
                   reorderingMode
                       ? const Padding(
-                          padding: EdgeInsets.all(12.0),
+                          padding: EdgeInsets.all(4.0),
                           child: Icon(Icons.menu),
                         )
                       : Checkbox(
