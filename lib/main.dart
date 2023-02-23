@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
+import 'package:sarims_todo_app/pages/change_password.dart';
 import 'package:sarims_todo_app/pages/home.dart';
 import 'package:sarims_todo_app/pages/login.dart';
 import 'package:sarims_todo_app/pages/register.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/home': ((context) => HomePage()),
         '/login': ((context) => LoginPage()),
         '/register': ((context) => RegisterPage()),
+        '/change_password': ((context) => ChangePasswordPage()),
       },
     );
   }

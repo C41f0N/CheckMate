@@ -55,12 +55,14 @@ Future<String> registerUser(String username, String password) async {
 
 Future<bool> changePasswordOnServer(String newPassword) async {
   final username = getSessionUsername();
+  final oldHash = getSessionPasswordHash();
   final newHash = await hashPass(newPassword);
 
   try {
     var result = await http.get(Uri.parse(
-        'https://sarimahmed.tech/sarim-s_todo_app/change_pass.php?username=${Uri.encodeComponent(username)}&hash=asnewhash&new_hash=${Uri.encodeComponent(newHash)}'));
+        "https://sarimahmed.tech/sarim-s_todo_app/change_pass.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(oldHash)}&new_hash=${Uri.encodeComponent(newHash)}"));
     if ((result.statusCode / 100).floor() == 2) {
+      print(result.body);
       return result.body == "1";
     } else {
       return false;

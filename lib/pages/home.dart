@@ -35,11 +35,9 @@ class _HomePageState extends State<HomePage> {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!DateTime.now().isBefore(nextUpdateAt) && timer.isActive) {
         if (await checkServerUpdateAppointmentStatus()) {
-          print("uploading");
           await uploadTaskData();
         } else {
           if (!isFirstUpdate) {
-            print("downloading");
             await refreshTaskData();
           }
         }
@@ -66,9 +64,10 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             onPressed: () {
               if (!isUploading && !isRefreshing) {
-              setState(() {
-                reorderMode = !reorderMode;
-              });}
+                setState(() {
+                  reorderMode = !reorderMode;
+                });
+              }
             },
             icon: reorderMode
                 ? const Icon(Icons.check)
@@ -85,7 +84,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                       actions: [
                         ElevatedButton(
-                          
                           onPressed: () {
                             if (checkServerUpdateAppointmentStatus()) {
                               Navigator.of(context).pop();
@@ -124,6 +122,13 @@ class _HomePageState extends State<HomePage> {
             },
             icon: const Icon(Icons.logout),
           ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/change_password', (Route<dynamic> route) => false);
+            },
+            icon: const Icon(Icons.change_circle),
+          ),
         ],
       ),
       body: StreamBuilder(
@@ -144,7 +149,10 @@ class _HomePageState extends State<HomePage> {
                         var taskList = db.taskList;
                         List<Widget> taskDisplayList = [
                           SizedBox(
-                            height: isUploading || isRefreshing || !hasConnection ? 40 : 0,
+                            height:
+                                isUploading || isRefreshing || !hasConnection
+                                    ? 40
+                                    : 0,
                           ),
                           ...taskList.map((taskData) {
                             return TaskCard(
@@ -163,7 +171,8 @@ class _HomePageState extends State<HomePage> {
                         if (snapshot.hasData) {
                           return reorderMode
                               ? ReorderableListView.builder(
-                                header: SizedBox(height: hasConnection ? 0 : 40),
+                                  header:
+                                      SizedBox(height: hasConnection ? 0 : 40),
                                   // buildDefaultDragHandles: true,
                                   padding:
                                       const EdgeInsets.fromLTRB(0, 6, 0, 0),
@@ -200,17 +209,19 @@ class _HomePageState extends State<HomePage> {
                               child: CircularProgressIndicator());
                         }
                       }),
-                      hasConnection ?
-                  isUploading
-                      ? const UploadingDataIndicator()
-                      : isRefreshing
-                          ? const RefreshingDataIndicator()
-                          : const SizedBox()
-                          : const NoInternetIndicator(),
+                  hasConnection
+                      ? isUploading
+                          ? const UploadingDataIndicator()
+                          : isRefreshing
+                              ? const RefreshingDataIndicator()
+                              : const SizedBox()
+                      : const NoInternetIndicator(),
                 ],
               );
             } else {
-              return const Center(child: CircularProgressIndicator(),);
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
           }),
       floatingActionButton: FloatingActionButton(
@@ -339,7 +350,6 @@ class _HomePageState extends State<HomePage> {
       isRefreshing = false;
     });
     if (downloadResult) {
-      print(nextUpdateAt);
       nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       db.loadData();
     }
