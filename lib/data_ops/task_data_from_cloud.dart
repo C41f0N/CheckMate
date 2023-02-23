@@ -17,7 +17,7 @@ Future<String> fetchEncryptedDataFromServer() async {
   }
 }
 
-Future<bool> uploadEncryptedDataToServer(encryptedData) async {
+Future<String> uploadEncryptedDataToServer(encryptedData) async {
   // Load required data
   final username = getSessionUsername();
   final hash = getSessionPasswordHash();
@@ -26,8 +26,8 @@ Future<bool> uploadEncryptedDataToServer(encryptedData) async {
   try {
     final result = await http.get(Uri.parse(
         'https://sarimahmed.tech/sarim-s_todo_app/upload_task_data.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}&task_data=${Uri.encodeComponent(encryptedData)}'));
-    return result.body == "1";
+    return result.body;
   } on Exception catch (_) {
-    return false;
+    return "0";
   }
 }

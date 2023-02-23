@@ -80,7 +80,7 @@ class TaskDatabase {
     return taskList.removeAt(index);
   }
 
-  Future<bool> uploadDataToServer() async {
+  Future<String> uploadDataToServer() async {
     List<String> combinedStringList = [];
 
     for (var taskData in taskList) {
@@ -93,17 +93,20 @@ class TaskDatabase {
     if (getSessionEncryptionKey().isNotEmpty) {
       final encryptedData =
           encryptTaskData(taskDataString, getSessionEncryptionKey());
-      return await uploadEncryptedDataToServer(encryptedData);
+      final uploadResult = await uploadEncryptedDataToServer(encryptedData);
+      return uploadResult != "auth_failed" ? uploadResult : "password_changed";
     } else {
-      return false;
+      return "0";
     }
   }
 
-  Future<bool> getTaskDataFromServer() async {
+  Future<String> getTaskDataFromServer() async {
     // Get Data
     final encryptedData = await fetchEncryptedDataFromServer();
-
-    if (encryptedData.isNotEmpty && getSessionEncryptionKey().isNotEmpty) {
+    if (encryptedData == "auth_failed") {
+      return "password_changed";
+    } else if (encryptedData.isNotEmpty &&
+        getSessionEncryptionKey().isNotEmpty) {
       if (encryptedData != "NULL") {
         // Decrypt Data
         final decryptedData =
@@ -122,18 +125,18 @@ class TaskDatabase {
             taskList.add([taskName, completed]);
           }
           saveData();
-          return true;
+          return "1";
         } else {
-          return false;
+          return "0";
         }
       } else {
         print("Creating new data for new user.");
         loadData();
         // return await uploadDataToServer();
-        return true;
+        return "1";
       }
     } else {
-      return false;
+      return "0";
     }
   }
 }

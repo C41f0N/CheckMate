@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
@@ -61,23 +62,57 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: ListView(
           children: [
-            const DrawerHeader(
-              child: Text("Sarim's To Do App"),
+            DrawerHeader(
+              child: Container(
+                alignment: Alignment.bottomLeft,
+                child: AutoSizeText(
+                  "${getSessionUsername()}'s To Do List",
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ),
             ),
             ListTile(
-              title: const Text("Change Theme"),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  Icon(Icons.color_lens, color: Colors.black,),
+                  SizedBox(width: 10,),
+                  Text("Change Theme"),
+                ],
+              ),
               onTap: () {},
             ),
             ListTile(
-              title: const Text("Credits"),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  Icon(Icons.info, color: Colors.black,),
+                  SizedBox(width: 10,),
+                  Text("Credits"),
+                ],
+              ),
               onTap: () {},
             ),
             ListTile(
-              title: const Text("Change Password"),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  Icon(Icons.password, color: Colors.black,),
+                  SizedBox(width: 10,),
+                  Text("Change Password"),
+                ],
+              ),
               onTap: changePassword,
             ),
             ListTile(
-              title: const Text("Logout"),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const [
+                  Icon(Icons.logout, color: Colors.black,),
+                  SizedBox(width: 10,),
+                  Text("Logout"),
+                ],
+              ),
               onTap: logout,
             ),
           ],
@@ -87,6 +122,12 @@ class _HomePageState extends State<HomePage> {
         title: const Text("T O - D O   L I S T"),
         centerTitle: true,
         actions: [
+          !(Platform.isAndroid || Platform.isIOS)
+              ? IconButton(
+                  onPressed: refreshList,
+                  icon: const Icon(Icons.refresh),
+                )
+              : const SizedBox(),
           IconButton(
             onPressed: () {
               if (!isUploading && !isRefreshing) {
@@ -99,12 +140,6 @@ class _HomePageState extends State<HomePage> {
                 ? const Icon(Icons.check)
                 : const Icon(Icons.reorder),
           ),
-          !(Platform.isAndroid || Platform.isIOS)
-              ? IconButton(
-                  onPressed: refreshList,
-                  icon: const Icon(Icons.refresh),
-                )
-              : const SizedBox()
         ],
       ),
       body: StreamBuilder(
@@ -360,9 +395,11 @@ class _HomePageState extends State<HomePage> {
       isUploading = true;
     });
     final uploadResult = await db.uploadDataToServer();
-    if (uploadResult) {
+    if (uploadResult == "1") {
       nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       setUpdateAppointmentWithServerStatus(false);
+    } else if (uploadResult == "password_changed") {
+      onChangedPassword();
     }
     setState(() {
       isUploading = false;
@@ -377,10 +414,20 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       isRefreshing = false;
     });
-    if (downloadResult) {
+    if (downloadResult == "1") {
       nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       db.loadData();
+    } else if (downloadResult == "password_changed") {
+      onChangedPassword();
     }
+  }
+
+  onChangedPassword() {
+    removeLoginInfoFromDevice();
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Your password was changed, please log in again")));
   }
 
   void changePassword() {

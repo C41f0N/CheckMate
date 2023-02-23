@@ -20,13 +20,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Colors.blueGrey;
+    const primaryColor = Colors.purple;
+    final scaffoldBackgroundColor = Colors.grey[900];
     return MaterialApp(
       title: 'Sarim\'s To-Do App',
       theme: ThemeData(
         primarySwatch: primaryColor,
-        scaffoldBackgroundColor: Colors.grey[900],
-        dialogBackgroundColor: Colors.grey[900],
+        scaffoldBackgroundColor: scaffoldBackgroundColor,
+        dialogBackgroundColor: scaffoldBackgroundColor,
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.grey[850],
@@ -47,16 +48,16 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
         ),
-        drawerTheme: DrawerThemeData(
+        drawerTheme: const DrawerThemeData(
           backgroundColor: primaryColor
         )
       ),
       initialRoute: getLoginStatus() ? '/home' : '/login',
       routes: {
-        '/home': ((context) => HomePage()),
-        '/login': ((context) => LoginPage()),
-        '/register': ((context) => RegisterPage()),
-        '/change_password': ((context) => ChangePasswordPage()),
+        '/home': ((context) => const HomePage()),
+        '/login': ((context) => const LoginPage()),
+        '/register': ((context) => const RegisterPage()),
+        '/change_password': ((context) => const ChangePasswordPage()),
       },
     );
   }
