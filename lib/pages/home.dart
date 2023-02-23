@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
@@ -57,6 +58,31 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              child: Text("Sarim's To Do App"),
+            ),
+            ListTile(
+              title: const Text("Change Theme"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: const Text("Credits"),
+              onTap: () {},
+            ),
+            ListTile(
+              title: const Text("Change Password"),
+              onTap: changePassword,
+            ),
+            ListTile(
+              title: const Text("Logout"),
+              onTap: logout,
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: const Text("T O - D O   L I S T"),
         centerTitle: true,
@@ -73,62 +99,12 @@ class _HomePageState extends State<HomePage> {
                 ? const Icon(Icons.check)
                 : const Icon(Icons.reorder),
           ),
-          IconButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: ((context) => AlertDialog(
-                      title: const Text(
-                        "Are you sure you want to log out?",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      actions: [
-                        ElevatedButton(
-                          onPressed: () {
-                            if (checkServerUpdateAppointmentStatus()) {
-                              Navigator.of(context).pop();
-                              showDialog(
-                                  context: context,
-                                  builder: ((context) => AlertDialog(
-                                        title: const Text(
-                                          "Are you sure? There is still some data not yet written to the cloud, we advise refreshing the list first.",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                        actions: [
-                                          ElevatedButton(
-                                            onPressed: logout,
-                                            child: const Text("Yes"),
-                                          ),
-                                          TextButton(
-                                            onPressed: (() =>
-                                                Navigator.pop(context)),
-                                            child: const Text("No"),
-                                          ),
-                                        ],
-                                      )));
-                            } else {
-                              logout();
-                            }
-                          },
-                          child: const Text("Yes"),
-                        ),
-                        TextButton(
-                          onPressed: (() => Navigator.pop(context)),
-                          child: const Text("No"),
-                        )
-                      ],
-                    )),
-              );
-            },
-            icon: const Icon(Icons.logout),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/change_password', (Route<dynamic> route) => false);
-            },
-            icon: const Icon(Icons.change_circle),
-          ),
+          !(Platform.isAndroid || Platform.isIOS)
+              ? IconButton(
+                  onPressed: refreshList,
+                  icon: const Icon(Icons.refresh),
+                )
+              : const SizedBox()
         ],
       ),
       body: StreamBuilder(
@@ -191,12 +167,7 @@ class _HomePageState extends State<HomePage> {
                                 )
                               : RefreshIndicator(
                                   key: GlobalKey<RefreshIndicatorState>(),
-                                  onRefresh: () async {
-                                    nextUpdateAt = DateTime.now();
-                                    return checkServerUpdateAppointmentStatus()
-                                        ? await uploadTaskData()
-                                        : await refreshTaskData();
-                                  },
+                                  onRefresh: refreshList,
                                   child: ListView(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 6, 0, 0),
@@ -294,11 +265,68 @@ class _HomePageState extends State<HomePage> {
   }
 
   void logout() {
-    removeLoginInfoFromDevice();
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text("Logged Out.")));
+    showDialog(
+      context: context,
+      builder: ((context) => AlertDialog(
+            title: const Text(
+              "Are you sure you want to log out?",
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  if (checkServerUpdateAppointmentStatus()) {
+                    Navigator.of(context).pop();
+                    showDialog(
+                        context: context,
+                        builder: ((context) => AlertDialog(
+                              title: const Text(
+                                "Are you sure? There is still some data not yet written to the cloud, we advise refreshing the list first.",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    removeLoginInfoFromDevice();
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil('/login',
+                                            (Route<dynamic> route) => false);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text("Logged Out.")));
+                                  },
+                                  child: const Text("Yes"),
+                                ),
+                                TextButton(
+                                  onPressed: (() => Navigator.pop(context)),
+                                  child: const Text("No"),
+                                ),
+                              ],
+                            )));
+                  } else {
+                    removeLoginInfoFromDevice();
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/login', (Route<dynamic> route) => false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Logged Out.")));
+                  }
+                },
+                child: const Text("Yes"),
+              ),
+              TextButton(
+                onPressed: (() => Navigator.pop(context)),
+                child: const Text("No"),
+              )
+            ],
+          )),
+    );
+  }
+
+  Future<void> refreshList() async {
+    nextUpdateAt = DateTime.now();
+    return checkServerUpdateAppointmentStatus()
+        ? await uploadTaskData()
+        : await refreshTaskData();
   }
 
   void onReorder(int oldIndex, int newIndex) async {
@@ -353,5 +381,10 @@ class _HomePageState extends State<HomePage> {
       nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       db.loadData();
     }
+  }
+
+  void changePassword() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/change_password', (Route<dynamic> route) => false);
   }
 }

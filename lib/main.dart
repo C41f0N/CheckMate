@@ -20,10 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Colors.blueGrey;
     return MaterialApp(
       title: 'Sarim\'s To-Do App',
       theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+        primarySwatch: primaryColor,
         scaffoldBackgroundColor: Colors.grey[900],
         dialogBackgroundColor: Colors.grey[900],
         inputDecorationTheme: InputDecorationTheme(
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
           labelStyle: TextStyle(color: Colors.grey[400]),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: Colors.blueGrey.withAlpha(170),
+              color: primaryColor.withAlpha(170),
               width: 2,
             ),
             borderRadius: BorderRadius.circular(5),
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
         ),
+        drawerTheme: DrawerThemeData(
+          backgroundColor: primaryColor
+        )
       ),
       initialRoute: getLoginStatus() ? '/home' : '/login',
       routes: {
