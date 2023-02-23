@@ -141,10 +141,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       // Register Button
                       GestureDetector(
-                        onTap: !processing &&
-                                hasConnection &&
-                                (passwordController.text.isNotEmpty &&
-                                    usernameController.text.isNotEmpty)
+                        onTap: (passwordController.text.isNotEmpty &&
+                                usernameController.text.isNotEmpty)
                             ? register
                             : () {},
                         child: Container(

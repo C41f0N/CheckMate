@@ -77,7 +77,8 @@ class _LoginPageState extends State<LoginPage> {
                             ? 320
                             : MediaQuery.of(context).size.width * 0.8,
                         child: TextField(
-                          obscureText: hidePassword || processing || !hasConnection,
+                          obscureText:
+                              hidePassword || processing || !hasConnection,
                           enabled: !processing && hasConnection,
                           controller: passwordController,
                           style: const TextStyle(color: Colors.white),
@@ -106,10 +107,8 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Login Button if connected, else warning message
                       GestureDetector(
-                        onTap: !processing &&
-                                hasConnection &&
-                                (passwordController.text.isNotEmpty &&
-                                    usernameController.text.isNotEmpty)
+                        onTap: (passwordController.text.isNotEmpty &&
+                                usernameController.text.isNotEmpty)
                             ? login
                             : () {},
                         child: Container(
@@ -130,11 +129,13 @@ class _LoginPageState extends State<LoginPage> {
                                   style: TextStyle(color: Colors.white),
                                 )
                               : Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: const [
-                                    Icon(Icons.signal_wifi_statusbar_connected_no_internet_4_rounded),
-                                    SizedBox(width: 15,),
+                                    Icon(Icons
+                                        .signal_wifi_statusbar_connected_no_internet_4_rounded),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
                                     Text(
                                       "No Internet Connection :(",
                                       style: TextStyle(

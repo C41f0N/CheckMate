@@ -65,8 +65,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             ? 320
                             : MediaQuery.of(context).size.width * 0.8,
                         child: TextField(
-                          obscureText:
-                              hideCurrentPassword || processing || !hasConnection,
+                          obscureText: hideCurrentPassword ||
+                              processing ||
+                              !hasConnection,
                           enabled: !processing && hasConnection,
                           controller: currentPasswordController,
                           style: const TextStyle(color: Colors.white),
@@ -163,11 +164,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
                       // Login Button if connected, else warning message
                       GestureDetector(
-                        onTap: !processing &&
-                                hasConnection &&
-                                (currentPasswordController.text.isNotEmpty &&
-                                    newPasswordController.text.isNotEmpty &&
-                                    newPasswordVerifyController.text.isNotEmpty)
+                        onTap: (currentPasswordController.text.isNotEmpty &&
+                                newPasswordController.text.isNotEmpty &&
+                                newPasswordVerifyController.text.isNotEmpty)
                             ? changePassword
                             : () {},
                         child: Container(
@@ -273,6 +272,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               ),
             )));
 
+    // Get server data encrypted with current password
+    final TaskDatabase db = TaskDatabase();
+    await db.getTaskDataFromServer();
+
     // Check if current password is valid
     final currentPasswordResult = await verifyPassword(
         getSessionUsername(), currentPasswordController.text);
@@ -309,14 +312,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
     // If verification was successfully done, then do this
     if (processSuccessful) {
-      final TaskDatabase db = TaskDatabase();
-      await db.getTaskDataFromServer();
-      
-      saveLoginInfoToDevice(
+      await saveLoginInfoToDevice(
         getSessionUsername(),
         newPasswordController.text,
       );
 
+      // encrypt data again with new key and upload
       await db.uploadDataToServer();
 
       ScaffoldMessenger.of(context).showSnackBar(
