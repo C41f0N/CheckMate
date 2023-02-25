@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
 import 'package:sarims_todo_app/pages/change_password.dart';
 import 'package:sarims_todo_app/pages/home.dart';
 import 'package:sarims_todo_app/pages/login.dart';
+import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/pages/register.dart';
 
 Future<void> main() async {
@@ -11,21 +13,36 @@ Future<void> main() async {
 
   await Hive.openBox("TASKS_LOCAL_DATABASE");
   await Hive.openBox("USER_SESSION_DATA");
+  await Hive.openBox("THEME_DATA");
 
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    currentTheme.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const primaryColor = Colors.purple;
+    final primaryColor = currentTheme.getCurrentPrimarySwatch();
     final scaffoldBackgroundColor = Colors.grey[900];
     return MaterialApp(
       title: 'Sarim\'s To-Do App',
       theme: ThemeData(
         primarySwatch: primaryColor,
+        primaryColor: primaryColor,
         scaffoldBackgroundColor: scaffoldBackgroundColor,
         dialogBackgroundColor: scaffoldBackgroundColor,
         inputDecorationTheme: InputDecorationTheme(
@@ -48,9 +65,10 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
         ),
-        drawerTheme: const DrawerThemeData(
-          backgroundColor: primaryColor
-        )
+        drawerTheme: DrawerThemeData(
+          backgroundColor: primaryColor.withAlpha(220),
+        ),
+        iconTheme: IconThemeData(color: currentTheme.isDark() ? Colors.grey[900] : Colors.grey[100]!)
       ),
       initialRoute: getLoginStatus() ? '/home' : '/login',
       routes: {

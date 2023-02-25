@@ -55,10 +55,16 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
                 if (!widget
                     .checkTaskExistenceCallback(taskNameController.text)) {
                   if (taskNameController.text != '') {
-                    widget.addTaskCallback(taskNameController.text);
-                    Navigator.pop(context);
+                    if (!taskNameController.text.contains("|")) {
+                      widget.addTaskCallback(taskNameController.text);
+                      errorText = null;
+                      Navigator.pop(context);
+                    } else {
+                      setState(() {
+                        errorText = "Task name cannot contain '|'";
+                      });
+                    }
                   }
-                  errorText = null;
                 } else {
                   setState(() {
                     errorText = "Task Already Exists";

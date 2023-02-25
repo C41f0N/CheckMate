@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sarims_todo_app/config.dart';
 
 class RefreshingDataIndicator extends StatelessWidget {
   const RefreshingDataIndicator({super.key});
@@ -18,18 +19,22 @@ class RefreshingDataIndicator extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
+        children: [
           SizedBox(
               width: 10,
               height: 10,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.black,
+                color: currentTheme.isDark() ? Colors.black : Colors.white,
               )),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
-          Text("Refreshing Data, Please Wait..", style: TextStyle(fontWeight: FontWeight.w500)),
+          Text("Refreshing Data, Please Wait..",
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: currentTheme.isDark() ? Colors.black : Colors.white,
+              )),
         ],
       ),
     );

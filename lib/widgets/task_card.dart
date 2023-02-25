@@ -1,9 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:sarims_todo_app/config.dart';
 import 'package:swipeable_tile/swipeable_tile.dart';
 
-class TaskCard extends StatelessWidget {
+class TaskCard extends StatefulWidget {
   const TaskCard(
       {super.key,
       required this.taskName,
@@ -18,8 +19,13 @@ class TaskCard extends StatelessWidget {
   final Function onDelete;
   final bool reorderingMode;
 
+  @override
+  State<TaskCard> createState() => _TaskCardState();
+}
+
+class _TaskCardState extends State<TaskCard> {
   void onDeleteWithContext(BuildContext context) {
-    onDelete(taskName);
+    widget.onDelete(widget.taskName);
   }
 
   @override
@@ -36,7 +42,7 @@ class TaskCard extends StatelessWidget {
           motion: const ScrollMotion(),
           children: [
             SlidableAction(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(4),
                 bottomLeft: Radius.circular(4),
               ),
@@ -48,19 +54,19 @@ class TaskCard extends StatelessWidget {
         ),
         child: GestureDetector(
           onTap: () {
-            if (!reorderingMode) {
-              onTaskCheckChange(taskName, completed);
+            if (!widget.reorderingMode) {
+              widget.onTaskCheckChange(widget.taskName, widget.completed);
             }
           },
           child: Container(
             key: UniqueKey(),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: completed
-                  ? reorderingMode
+              color: widget.completed
+                  ? widget.reorderingMode
                       ? Colors.grey[800]!.withOpacity(0.7)
                       : Colors.grey[800]
-                  : reorderingMode
+                  : widget.reorderingMode
                       ? Theme.of(context).colorScheme.secondary.withOpacity(0.7)
                       : Theme.of(context).colorScheme.secondary,
               borderRadius: BorderRadius.circular(4),
@@ -69,28 +75,46 @@ class TaskCard extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: [
-                  reorderingMode
+                  widget.reorderingMode
                       ? const Padding(
-                          padding: EdgeInsets.all(4.0),
+                          padding: EdgeInsets.all(12.0),
                           child: Icon(Icons.menu),
                         )
                       : Checkbox(
-                          value: completed,
+                          side: BorderSide(
+                            color: currentTheme.isDark()
+                                ? Colors.grey[800]!
+                                : Colors.grey[300]!,
+                            width: 2,
+                          ),
+                          value: widget.completed,
                           onChanged: ((completed) {
-                            if (!reorderingMode) {
-                              onTaskCheckChange(taskName, completed);
+                            if (!widget.reorderingMode) {
+                              widget.onTaskCheckChange(
+                                widget.taskName,
+                                completed,
+                              );
                             }
-                          })),
+                          }),
+                        ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: AutoSizeText(
-                      taskName,
+                      widget.taskName,
                       style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 20,
-                          decoration: completed
-                              ? TextDecoration.lineThrough
-                              : TextDecoration.none),
+                        color: currentTheme.isDark()
+                            ? !widget.completed
+                                ? Colors.black
+                                : Colors.black.withOpacity(0.7)
+                            : !widget.completed
+                                ? Colors.grey[200]
+                                : Colors.grey[200]!.withOpacity(0.5),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 20,
+                        decoration: widget.completed
+                            ? TextDecoration.lineThrough
+                            : TextDecoration.none,
+                      ),
                     ),
                   ),
                 ],

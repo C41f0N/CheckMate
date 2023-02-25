@@ -4,7 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
+import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
+import 'package:sarims_todo_app/dialogues/change_theme_dialogue.dart';
+import 'package:sarims_todo_app/widgets/home_page_drawer.dart';
 import 'package:sarims_todo_app/widgets/no_internet_indicator.dart';
 import 'package:sarims_todo_app/widgets/refreshing_data_indicator.dart';
 import 'package:sarims_todo_app/widgets/task_card.dart';
@@ -59,64 +62,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: Container(
-                alignment: Alignment.bottomLeft,
-                child: AutoSizeText(
-                  "${getSessionUsername()}'s To Do List",
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ),
-            ),
-            ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Icon(Icons.color_lens, color: Colors.black,),
-                  SizedBox(width: 10,),
-                  Text("Change Theme"),
-                ],
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Icon(Icons.info, color: Colors.black,),
-                  SizedBox(width: 10,),
-                  Text("Credits"),
-                ],
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Icon(Icons.password, color: Colors.black,),
-                  SizedBox(width: 10,),
-                  Text("Change Password"),
-                ],
-              ),
-              onTap: changePassword,
-            ),
-            ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: const [
-                  Icon(Icons.logout, color: Colors.black,),
-                  SizedBox(width: 10,),
-                  Text("Logout"),
-                ],
-              ),
-              onTap: logout,
-            ),
-          ],
-        ),
+      drawer: HomePageDrawer(
+        logoutMethod: logout,
+        showChangeThemeMethod: showThemeChangeDialogue,
+        changePasswordMethod: changePassword,
       ),
       appBar: AppBar(
         title: const Text("T O - D O   L I S T"),
@@ -230,20 +179,22 @@ class _HomePageState extends State<HomePage> {
               );
             }
           }),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: ((_) {
-              return AddTaskDialogue(
-                addTaskCallback: addTask,
-                checkTaskExistenceCallback: checkTaskExistence,
-              );
-            }),
-          );
-        },
-      ),
+      floatingActionButton: !reorderMode
+          ? FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: ((_) {
+                    return AddTaskDialogue(
+                      addTaskCallback: addTask,
+                      checkTaskExistenceCallback: checkTaskExistence,
+                    );
+                  }),
+                );
+              },
+            )
+          : const SizedBox(),
     );
   }
 
@@ -408,6 +359,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> refreshTaskData() async {
     setState(() {
+      reorderMode = false;
       isRefreshing = true;
     });
     final downloadResult = await db.getTaskDataFromServer();
@@ -433,5 +385,16 @@ class _HomePageState extends State<HomePage> {
   void changePassword() {
     Navigator.of(context).pushNamedAndRemoveUntil(
         '/change_password', (Route<dynamic> route) => false);
+  }
+
+  void showThemeChangeDialogue() {
+    showDialog(
+      context: context,
+      builder: (context) => const ChangeThemeDialogue(),
+    );
+  }
+
+  void themeChangeRefresh() {
+    setState(() {});
   }
 }

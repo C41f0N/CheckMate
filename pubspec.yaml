@@ -46,6 +46,7 @@ dependencies:
   observe_internet_connectivity: ^1.0.2
   connectivity_plus: ^0.0.1
   flutter_slidable: ^2.0.0
+  flutter_material_color_picker: ^1.1.0+2
 
 dev_dependencies:
   flutter_test:
