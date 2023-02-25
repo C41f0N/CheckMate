@@ -150,6 +150,7 @@ class _HomePageState extends State<HomePage> {
                                   onReorder: onReorder,
                                 )
                               : RefreshIndicator(
+                                  backgroundColor: Colors.grey[900],
                                   key: GlobalKey<RefreshIndicatorState>(),
                                   onRefresh: refreshList,
                                   child: ListView(
@@ -227,6 +228,7 @@ class _HomePageState extends State<HomePage> {
     );
     List deletedTask = db.taskList[index];
     db.deleteTask(taskName);
+    setUpdateAppointmentWithServerStatus(true);
     setState(() {});
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -327,7 +329,7 @@ class _HomePageState extends State<HomePage> {
 
   void setUpdateAppointmentWithServerStatus(bool value) {
     if (value) {
-      nextUpdateAt = DateTime.now().add(const Duration(seconds: 10));
+      nextUpdateAt = DateTime.now().add(const Duration(seconds: 3));
     }
     _myBox.put("SERVER_UPDATE_NEEDED", value);
   }
