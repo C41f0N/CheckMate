@@ -20,24 +20,29 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        "Add Task",
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.center,
-      ),
+      contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       content: SizedBox(
-        height: 130,
+        height: 200,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              "Add Task",
+              style: TextStyle(
+                fontSize: 25,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
             TextField(
               controller: taskNameController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                label: Text("New Task"),
+                label: const Text("New Task"),
                 // labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
                 errorText: errorText,
                 errorBorder: const OutlineInputBorder(
@@ -49,6 +54,9 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
                   ),
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 20,
             ),
             ElevatedButton(
               onPressed: () async {

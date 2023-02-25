@@ -41,35 +41,39 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Sarim\'s To-Do App',
       theme: ThemeData(
-        primarySwatch: primaryColor,
-        primaryColor: primaryColor,
-        scaffoldBackgroundColor: scaffoldBackgroundColor,
-        dialogBackgroundColor: scaffoldBackgroundColor,
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.grey[850],
-          focusColor: Colors.grey[800],
-          labelStyle: TextStyle(color: Colors.grey[400]),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: primaryColor.withAlpha(170),
-              width: 2,
+          primarySwatch: primaryColor,
+          primaryColor: primaryColor,
+          scaffoldBackgroundColor: scaffoldBackgroundColor,
+          dialogBackgroundColor: scaffoldBackgroundColor,
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: Colors.grey[850],
+            focusColor: Colors.grey[800],
+            labelStyle: TextStyle(color: Colors.grey[400]),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: primaryColor.withAlpha(170),
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(5),
             ),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              width: 2,
-              color: Colors.red.withAlpha(170),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 2,
+                color: Colors.red.withAlpha(170),
+              ),
+              borderRadius: BorderRadius.circular(5),
             ),
-            borderRadius: BorderRadius.circular(5),
           ),
-        ),
-        drawerTheme: DrawerThemeData(
-          backgroundColor: primaryColor.withAlpha(220),
-        ),
-        iconTheme: IconThemeData(color: currentTheme.isDark() ? Colors.grey[900] : Colors.grey[100]!)
-      ),
+          drawerTheme: DrawerThemeData(
+            backgroundColor: primaryColor.withAlpha(220),
+          ),
+          iconTheme: IconThemeData(
+              color:
+                  currentTheme.isDark() ? Colors.grey[900] : Colors.grey[100]!),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style:
+                  ElevatedButton.styleFrom(foregroundColor: Colors.grey[900]))),
       initialRoute: getLoginStatus() ? '/home' : '/login',
       routes: {
         '/home': ((context) => const HomePage()),

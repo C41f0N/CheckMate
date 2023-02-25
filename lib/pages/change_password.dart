@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
+import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/pages/register.dart';
 import '../data_ops/user_session_cloud_ops.dart';
@@ -182,9 +183,13 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               ? 320
                               : MediaQuery.of(context).size.width * 0.8,
                           child: hasConnection
-                              ? const Text(
+                              ? Text(
                                   'Change Password',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: currentTheme.isDark()
+                                          ? Colors.grey[800]
+                                          : Colors.white,
+                                      fontWeight: FontWeight.w500),
                                 )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

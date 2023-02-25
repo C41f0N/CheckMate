@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
+import '../config.dart';
 import '../data_ops/user_session_cloud_ops.dart';
 import '../data_ops/user_session_local_ops.dart';
 
@@ -122,9 +123,13 @@ class _LoginPageState extends State<LoginPage> {
                               ? 320
                               : MediaQuery.of(context).size.width * 0.8,
                           child: hasConnection
-                              ? const Text(
+                              ? Text(
                                   'Login',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                      color: currentTheme.isDark()
+                                          ? Colors.grey[800]
+                                          : Colors.white,
+                                      fontWeight: FontWeight.w500),
                                 )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
