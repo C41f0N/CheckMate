@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sarims_todo_app/config.dart';
 
 class NoInternetIndicator extends StatelessWidget {
   const NoInternetIndicator({super.key});
@@ -14,16 +15,20 @@ class NoInternetIndicator extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
+        children: [
           Icon(
             Icons.signal_wifi_statusbar_connected_no_internet_4_rounded,
+            color: currentTheme.isDark() ? Colors.black : Colors.white,
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           Text(
             "Can't connect, changes wont be saved.",
-            style: TextStyle(fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: currentTheme.isDark() ? Colors.black : Colors.white,
+            ),
           ),
         ],
       ),

@@ -42,11 +42,8 @@ class _TaskCardState extends State<TaskCard> {
           motion: const ScrollMotion(),
           children: [
             SlidableAction(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(4),
-                bottomLeft: Radius.circular(4),
-              ),
-              backgroundColor: Colors.redAccent,
+              borderRadius: BorderRadius.circular(4),
+              backgroundColor: Colors.red[700]!,
               icon: Icons.delete,
               onPressed: onDeleteWithContext,
             ),
@@ -81,10 +78,14 @@ class _TaskCardState extends State<TaskCard> {
                           child: Icon(Icons.menu),
                         )
                       : Checkbox(
+                        activeColor: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                          checkColor:currentTheme.isDark()
+                                  ? Colors.grey[900]
+                                  : Colors.white,
                           side: BorderSide(
                             color: currentTheme.isDark()
                                 ? Colors.grey[800]!
-                                : Colors.grey[300]!,
+                                : Color.fromARGB(255, 234, 234, 234)!,
                             width: 2,
                           ),
                           value: widget.completed,
