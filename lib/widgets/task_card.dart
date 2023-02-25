@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sarims_todo_app/config.dart';
-import 'package:swipeable_tile/swipeable_tile.dart';
 
 class TaskCard extends StatefulWidget {
   const TaskCard(
@@ -85,7 +84,7 @@ class _TaskCardState extends State<TaskCard> {
                           side: BorderSide(
                             color: currentTheme.isDark()
                                 ? Colors.grey[800]!
-                                : Color.fromARGB(255, 234, 234, 234)!,
+                                : const Color.fromARGB(255, 234, 234, 234)!,
                             width: 2,
                           ),
                           value: widget.completed,

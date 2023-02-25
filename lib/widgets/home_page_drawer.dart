@@ -9,12 +9,13 @@ class HomePageDrawer extends StatefulWidget {
     super.key,
     required this.logoutMethod,
     required this.showChangeThemeMethod,
-    required this.changePasswordMethod,
+    required this.changePasswordMethod, required this.showCreditsDialogMethod,
   });
 
   final Function() logoutMethod;
   final Function() showChangeThemeMethod;
   final Function() changePasswordMethod;
+  final Function() showCreditsDialogMethod;
 
   @override
   State<HomePageDrawer> createState() => _HomePageDrawerState();
@@ -88,7 +89,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                 ),
               ],
             ),
-            onTap: () {},
+            onTap: widget.showCreditsDialogMethod,
           ),
           ListTile(
             title: Row(

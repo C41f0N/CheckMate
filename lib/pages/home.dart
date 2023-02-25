@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
-import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/dialogues/change_theme_dialogue.dart';
+import 'package:sarims_todo_app/dialogues/credits.dart';
 import 'package:sarims_todo_app/widgets/home_page_drawer.dart';
 import 'package:sarims_todo_app/widgets/no_internet_indicator.dart';
 import 'package:sarims_todo_app/widgets/refreshing_data_indicator.dart';
@@ -66,6 +65,7 @@ class _HomePageState extends State<HomePage> {
         logoutMethod: logout,
         showChangeThemeMethod: showThemeChangeDialogue,
         changePasswordMethod: changePassword,
+        showCreditsDialogMethod: showCreditsDialog,
       ),
       appBar: AppBar(
         title: const Text("T O - D O   L I S T"),
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                                   onReorder: onReorder,
                                 )
                               : RefreshIndicator(
-                                  backgroundColor: Colors.grey[900],
+                                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                                   key: GlobalKey<RefreshIndicatorState>(),
                                   onRefresh: refreshList,
                                   child: ListView(
@@ -396,7 +396,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void themeChangeRefresh() {
-    setState(() {});
+  void showCreditsDialog() {
+    showDialog(context: context, builder: ((context) => const Credits()));
   }
 }
