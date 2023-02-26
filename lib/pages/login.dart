@@ -6,6 +6,7 @@ import 'package:observe_internet_connectivity/observe_internet_connectivity.dart
 import '../config.dart';
 import '../data_ops/user_session_cloud_ops.dart';
 import '../data_ops/user_session_local_ops.dart';
+import '../utils/custom_buttons/connectivity_sensitive_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -107,47 +108,23 @@ class _LoginPageState extends State<LoginPage> {
                       ),
 
                       // Login Button if connected, else warning message
-                      GestureDetector(
+                      ConnectivitySensitiveButton(
+                        height: 55,
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
                         onTap: (passwordController.text.isNotEmpty &&
                                 usernameController.text.isNotEmpty)
                             ? login
                             : () {},
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: hasConnection
-                                ? Theme.of(context).colorScheme.primary
-                                : Colors.red[900],
-                          ),
-                          alignment: Alignment.center,
-                          height: 55,
-                          width: MediaQuery.of(context).size.width * 0.8 > 320
-                              ? 320
-                              : MediaQuery.of(context).size.width * 0.8,
-                          child: hasConnection
-                              ? Text(
-                                  'Login',
-                                  style: TextStyle(
-                                      color: currentTheme.isDark()
-                                          ? Colors.grey[800]
-                                          : Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(Icons
-                                        .signal_wifi_statusbar_connected_no_internet_4_rounded),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    Text(
-                                      "No Internet Connection :(",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
-                                ),
+                        hasConnection: hasConnection,
+                        child: Text(
+                          'Login',
+                          style: TextStyle(
+                              color: currentTheme.isDark()
+                                  ? Colors.grey[800]
+                                  : Colors.white,
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                       SizedBox(
