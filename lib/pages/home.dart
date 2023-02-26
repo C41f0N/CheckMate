@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      print("$userModifyingData ${DateTime.now()}");
       if (!DateTime.now().isBefore(nextUpdateAt) && timer.isActive) {
         if (checkServerUpdateAppointmentStatus() && !userModifyingData) {
           await uploadTaskData();
@@ -74,7 +75,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text("T O - D O   L I S T"),
         centerTitle: true,
         actions: [
-          !(Platform.isAndroid || Platform.isIOS)
+          !(Platform.isAndroid || Platform.isIOS) && !userModifyingData
               ? IconButton(
                   onPressed: refreshList,
                   icon: const Icon(Icons.refresh),
@@ -85,7 +86,7 @@ class _HomePageState extends State<HomePage> {
               if (!isUploading && !isRefreshing) {
                 setState(() {
                   reorderMode = !reorderMode;
-                  userModifyingData = reorderMode ? true: userModifyingData;
+                  userModifyingData = reorderMode;
                 });
               }
             },
@@ -142,66 +143,68 @@ class _HomePageState extends State<HomePage> {
                         ];
 
                         if (snapshot.hasData) {
-                          return RefreshIndicator(
-                            backgroundColor:
-                                Theme.of(context).scaffoldBackgroundColor,
-                            key: GlobalKey<RefreshIndicatorState>(),
-                            onRefresh: refreshList,
-                            // Check if reorder mode is turned on
-                            child: reorderMode
-                                ? taskList.isNotEmpty
-                                    ? ReorderableListView(
-                                        header: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              alignment: Alignment.center,
-                                              height: 30,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              decoration: BoxDecoration(
-                                                color: Colors.yellow[700],
-                                              ),
-                                              child: const Text(
-                                                "Reorder Mode",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
+                          return reorderMode
+                              ? taskList.isNotEmpty
+                                  ? ReorderableListView(
+                                      header: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            height: 30,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            decoration: BoxDecoration(
+                                              color: Colors.yellow[700],
                                             ),
-                                            const SizedBox(height: 6,),
-                                            SizedBox(
-                                                height: !hasConnection ||
-                                                        isRefreshing ||
-                                                        isUploading
-                                                    ? 40
-                                                    : 0),
-                                          ],
-                                        ),
-                                        // buildDefaultDragHandles: true,
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 0, 0, 0),
-                                        onReorder: onReorder,
-                                        children: taskDisplayList.sublist(1),
-                                      )
-                                    : taskList.isNotEmpty
-                                        ? ListView(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 6, 0, 0),
-                                            clipBehavior: Clip.antiAlias,
-                                            children: taskDisplayList)
-                                        : const YouHaveNoTasksBanner()
-                                : taskList.isNotEmpty
-                                    ? ListView(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 6, 0, 0),
-                                        clipBehavior: Clip.antiAlias,
-                                        children: taskDisplayList)
-                                    : const YouHaveNoTasksBanner(),
-                          );
+                                            child: const Text(
+                                              "Reorder Mode",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 6,
+                                          ),
+                                          SizedBox(
+                                              height: !hasConnection ||
+                                                      isRefreshing ||
+                                                      isUploading
+                                                  ? 40
+                                                  : 0),
+                                        ],
+                                      ),
+                                      // buildDefaultDragHandles: true,
+                                      padding:
+                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      onReorder: onReorder,
+                                      children: taskDisplayList.sublist(1),
+                                    )
+                                  : taskList.isNotEmpty
+                                      ? ListView(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 6, 0, 0),
+                                          clipBehavior: Clip.antiAlias,
+                                          children: taskDisplayList)
+                                      : const YouHaveNoTasksBanner()
+                              : RefreshIndicator(
+                                  backgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  key: GlobalKey<RefreshIndicatorState>(),
+                                  onRefresh: refreshList,
+                                  // Check if reorder mode is turned on
+                                  child: taskList.isNotEmpty
+                                      ? ListView(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 6, 0, 0),
+                                          clipBehavior: Clip.antiAlias,
+                                          children: taskDisplayList,
+                                        )
+                                      : const YouHaveNoTasksBanner(),
+                                );
                         } else {
                           return const Center(
                               child: CircularProgressIndicator());
@@ -351,7 +354,11 @@ class _HomePageState extends State<HomePage> {
           checkTaskExistenceCallback: checkTaskExistence,
         );
       }),
-    );
+    ).then((value) {
+      setState(() {
+        userModifyingData = false;
+      });
+    });
   }
 
   Future<void> refreshList() async {
