@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   bool isFirstUpdate = true;
   bool isUploading = false;
   bool isRefreshing = false;
+  bool userModifyingData = false;
 
   @override
   void initState() {
@@ -40,10 +41,10 @@ class _HomePageState extends State<HomePage> {
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!DateTime.now().isBefore(nextUpdateAt) && timer.isActive) {
-        if (checkServerUpdateAppointmentStatus()) {
+        if (checkServerUpdateAppointmentStatus() && !userModifyingData) {
           await uploadTaskData();
         } else {
-          if (!isFirstUpdate) {
+          if (!isFirstUpdate && !userModifyingData) {
             await refreshTaskData();
           }
         }
@@ -161,7 +162,6 @@ class _HomePageState extends State<HomePage> {
                                                   .width,
                                               decoration: BoxDecoration(
                                                 color: Colors.yellow[700],
-                                                
                                               ),
                                               child: const Text(
                                                 "Reorder Mode",
@@ -171,6 +171,7 @@ class _HomePageState extends State<HomePage> {
                                                         FontWeight.bold),
                                               ),
                                             ),
+                                            const SizedBox(height: 6,),
                                             SizedBox(
                                                 height: !hasConnection ||
                                                         isRefreshing ||
@@ -222,18 +223,8 @@ class _HomePageState extends State<HomePage> {
           }),
       floatingActionButton: !reorderMode
           ? FloatingActionButton(
+              onPressed: showAddTaskDialogue,
               child: const Icon(Icons.add),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: ((_) {
-                    return AddTaskDialogue(
-                      addTaskCallback: addTask,
-                      checkTaskExistenceCallback: checkTaskExistence,
-                    );
-                  }),
-                );
-              },
             )
           : const SizedBox(),
     );
@@ -247,15 +238,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void addTask(String taskName) {
-    var taskAdded = false;
-    while (!taskAdded) {
-      if (!(isUploading || isRefreshing)) {
-        db.addTask(taskName);
-        taskAdded = true;
-        setState(() {});
-      }
-      setUpdateAppointmentWithServerStatus(true);
-    }
+    db.addTask(taskName);
+    userModifyingData = false;
+    setState(() {});
+
+    setUpdateAppointmentWithServerStatus(true);
   }
 
   bool checkTaskExistence(String taskName) {
@@ -270,6 +257,7 @@ class _HomePageState extends State<HomePage> {
     db.deleteTask(taskName);
     setUpdateAppointmentWithServerStatus(true);
     setState(() {});
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -347,6 +335,21 @@ class _HomePageState extends State<HomePage> {
               )
             ],
           )),
+    );
+  }
+
+  void showAddTaskDialogue() {
+    setState(() {
+      userModifyingData = true;
+    });
+    showDialog(
+      context: context,
+      builder: ((_) {
+        return AddTaskDialogue(
+          addTaskCallback: addTask,
+          checkTaskExistenceCallback: checkTaskExistence,
+        );
+      }),
     );
   }
 
