@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
+import 'package:sarims_todo_app/utils/custom_buttons/connectivity_sensitive_button.dart';
 import '../data_ops/user_session_cloud_ops.dart';
 import '../data_ops/user_session_local_ops.dart';
 
@@ -164,48 +165,25 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                       ),
 
                       // Login Button if connected, else warning message
-                      GestureDetector(
+
+                      ConnectivitySensitiveButton(
+                        height: 55,
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
                         onTap: (currentPasswordController.text.isNotEmpty &&
                                 newPasswordController.text.isNotEmpty &&
                                 newPasswordVerifyController.text.isNotEmpty)
                             ? changePassword
                             : () {},
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: hasConnection
-                                ? Theme.of(context).colorScheme.primary
-                                : Colors.red[900],
-                          ),
-                          alignment: Alignment.center,
-                          height: 55,
-                          width: MediaQuery.of(context).size.width * 0.8 > 320
-                              ? 320
-                              : MediaQuery.of(context).size.width * 0.8,
-                          child: hasConnection
-                              ? Text(
-                                  'Change Password',
-                                  style: TextStyle(
-                                      color: currentTheme.isDark()
-                                          ? Colors.grey[800]
-                                          : Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(Icons
-                                        .signal_wifi_statusbar_connected_no_internet_4_rounded),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    Text(
-                                      "No Internet Connection :(",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
-                                ),
+                        hasConnection: hasConnection,
+                        child: Text(
+                          'Change Password',
+                          style: TextStyle(
+                              color: currentTheme.isDark()
+                                  ? Colors.grey[800]
+                                  : Colors.white,
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                       SizedBox(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import '../config.dart';
 import '../data_ops/user_session_cloud_ops.dart';
+import '../utils/custom_buttons/connectivity_sensitive_button.dart';
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -140,49 +141,26 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       // Register Button
-                      GestureDetector(
+                      ConnectivitySensitiveButton(
+                        height: 55,
+                        width: MediaQuery.of(context).size.width * 0.8 > 320
+                            ? 320
+                            : MediaQuery.of(context).size.width * 0.8,
                         onTap: (passwordController.text.isNotEmpty &&
                                 usernameController.text.isNotEmpty)
                             ? register
                             : () {},
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: hasConnection
-                                ? Theme.of(context).colorScheme.primary
-                                : Colors.red[900],
-                          ),
-                          alignment: Alignment.center,
-                          height: 55,
-                          width: MediaQuery.of(context).size.width * 0.8 > 320
-                              ? 320
-                              : MediaQuery.of(context).size.width * 0.8,
-                          child: hasConnection
-                              ? Text(
-                                  'Register',
-                                  style: TextStyle(
-                                      color: currentTheme.isDark()
-                                          ? Colors.grey[800]
-                                          : Colors.white,
-                                      fontWeight: FontWeight.w500),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(Icons
-                                        .signal_wifi_statusbar_connected_no_internet_4_rounded),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    Text(
-                                      "No Internet Connection :(",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ],
-                                ),
+                        hasConnection: hasConnection,
+                        child: Text(
+                          'Register',
+                          style: TextStyle(
+                              color: currentTheme.isDark()
+                                  ? Colors.grey[800]
+                                  : Colors.white,
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
+                      
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.2),
                       Row(
