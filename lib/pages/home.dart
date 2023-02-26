@@ -85,6 +85,7 @@ class _HomePageState extends State<HomePage> {
               if (!isUploading && !isRefreshing) {
                 setState(() {
                   reorderMode = !reorderMode;
+                  userModifyingData = reorderMode ? true: userModifyingData;
                 });
               }
             },
