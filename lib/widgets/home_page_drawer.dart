@@ -9,7 +9,8 @@ class HomePageDrawer extends StatefulWidget {
     super.key,
     required this.logoutMethod,
     required this.showChangeThemeMethod,
-    required this.changePasswordMethod, required this.showCreditsDialogMethod,
+    required this.changePasswordMethod,
+    required this.showCreditsDialogMethod,
   });
 
   final Function() logoutMethod;
@@ -71,31 +72,6 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.info,
-                  color: currentTheme.isDark()
-                      ? Colors.grey[900]
-                      : Colors.grey[200],
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  "Credits",
-                  style: TextStyle(
-                    color: currentTheme.isDark()
-                        ? Colors.grey[900]
-                        : Colors.grey[200],
-                  ),
-                ),
-              ],
-            ),
-            onTap: widget.showCreditsDialogMethod,
-          ),
-          ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
                   Icons.password,
                   color: currentTheme.isDark()
                       ? Colors.grey[900]
@@ -140,6 +116,31 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
               ],
             ),
             onTap: widget.logoutMethod,
+          ),
+          ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.info,
+                  color: currentTheme.isDark()
+                      ? Colors.grey[900]
+                      : Colors.grey[200],
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  "Credits",
+                  style: TextStyle(
+                    color: currentTheme.isDark()
+                        ? Colors.grey[900]
+                        : Colors.grey[200],
+                  ),
+                ),
+              ],
+            ),
+            onTap: widget.showCreditsDialogMethod,
           ),
         ],
       ),

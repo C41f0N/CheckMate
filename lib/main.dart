@@ -5,7 +5,6 @@ import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
 import 'package:sarims_todo_app/pages/change_password.dart';
 import 'package:sarims_todo_app/pages/home.dart';
 import 'package:sarims_todo_app/pages/login.dart';
-import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/pages/register.dart';
 
 Future<void> main() async {
@@ -66,7 +65,7 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
           drawerTheme: DrawerThemeData(
-            backgroundColor: primaryColor.withAlpha(220),
+            backgroundColor: primaryColor.withAlpha(200),
           ),
           iconTheme: IconThemeData(
               color:

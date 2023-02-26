@@ -1,10 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
-import 'package:sarims_todo_app/pages/register.dart';
 import '../data_ops/user_session_cloud_ops.dart';
 import '../data_ops/user_session_local_ops.dart';
 

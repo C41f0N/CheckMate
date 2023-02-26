@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
@@ -273,7 +275,6 @@ class _LoginPageState extends State<LoginPage> {
       }
       // Else show connection error
     } else {
-      print("Trying to show connection error");
       showDialog(
         context: context,
         builder: ((context) => AlertDialog(

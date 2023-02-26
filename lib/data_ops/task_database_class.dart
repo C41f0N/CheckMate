@@ -8,7 +8,6 @@ class TaskDatabase {
   final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
 
   void createDefaultData() {
-    print("Creating default data");
     taskList = [
       ["Clean Car", true],
       ["Kill Sarim", false],
@@ -91,6 +90,7 @@ class TaskDatabase {
 
     String taskDataString = combinedStringList.join("|||");
     if (getSessionEncryptionKey().isNotEmpty) {
+      taskDataString = taskDataString.isEmpty ? "NO_DATA" : taskDataString;
       final encryptedData =
           encryptTaskData(taskDataString, getSessionEncryptionKey());
       final uploadResult = await uploadEncryptedDataToServer(encryptedData);
@@ -111,26 +111,34 @@ class TaskDatabase {
         // Decrypt Data
         final decryptedData =
             decryptTaskData(encryptedData, getSessionEncryptionKey());
-        // Verify Decrypted Data
-        if (verifyDecryptedData(decryptedData)) {
-          // print(decryptedData);
-          var combinedStringTaskData =
-              extractTaskData(decryptedData).split("|||");
+        // Check if Decrypted Data has no tasks
+        if (extractTaskData(decryptedData) == "NO_DATA") {
           taskList = [];
-
-          for (var element in combinedStringTaskData) {
-            List<dynamic> taskData = element.split("||");
-            String taskName = taskData[0];
-            bool completed = taskData[1] == "true";
-            taskList.add([taskName, completed]);
-          }
           saveData();
-          return "1";
-        } else {
-          return "0";
+          return '1';
+        } else
+        // Verify Decrypted Data
+        {
+          if (verifyDecryptedData(decryptedData)) {
+            // print(decryptedData);
+            var combinedStringTaskData =
+                extractTaskData(decryptedData).split("|||");
+            taskList = [];
+
+            for (var element in combinedStringTaskData) {
+              List<dynamic> taskData = element.split("||");
+
+              String taskName = taskData[0];
+              bool completed = taskData[1] == "true";
+              taskList.add([taskName, completed]);
+            }
+            saveData();
+            return "1";
+          } else {
+            return "0";
+          }
         }
       } else {
-        print("Creating new data for new user.");
         loadData();
         // return await uploadDataToServer();
         return "1";

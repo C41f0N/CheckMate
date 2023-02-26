@@ -10,13 +10,15 @@ class TaskCard extends StatefulWidget {
       required this.completed,
       required this.onTaskCheckChange,
       required this.onDelete,
-      required this.reorderingMode});
+      required this.reorderingMode,
+      required this.enabled});
 
   final String taskName;
   final bool completed;
   final Function onTaskCheckChange;
   final Function onDelete;
   final bool reorderingMode;
+  final bool enabled;
 
   @override
   State<TaskCard> createState() => _TaskCardState();
@@ -37,6 +39,7 @@ class _TaskCardState extends State<TaskCard> {
         6,
       ),
       child: Slidable(
+        enabled: widget.enabled,
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
@@ -50,7 +53,7 @@ class _TaskCardState extends State<TaskCard> {
         ),
         child: GestureDetector(
           onTap: () {
-            if (!widget.reorderingMode) {
+            if (!widget.reorderingMode && widget.enabled) {
               widget.onTaskCheckChange(widget.taskName, widget.completed);
             }
           },
@@ -72,19 +75,30 @@ class _TaskCardState extends State<TaskCard> {
               child: Row(
                 children: [
                   widget.reorderingMode
-                      ? const Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Icon(Icons.menu),
+                      ? Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Icon(
+                            Icons.menu,
+                            color: widget.completed
+                                ? Theme.of(context)
+                                    .iconTheme
+                                    .color
+                                    ?.withOpacity(0.7)
+                                : Theme.of(context).iconTheme.color,
+                          ),
                         )
                       : Checkbox(
-                        activeColor: Theme.of(context).colorScheme.primary.withOpacity(0.7),
-                          checkColor:currentTheme.isDark()
-                                  ? Colors.grey[900]
-                                  : Colors.white,
+                          activeColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.7),
+                          checkColor: currentTheme.isDark()
+                              ? Colors.grey[900]
+                              : Colors.white,
                           side: BorderSide(
                             color: currentTheme.isDark()
                                 ? Colors.grey[800]!
-                                : const Color.fromARGB(255, 234, 234, 234)!,
+                                : const Color.fromARGB(255, 234, 234, 234),
                             width: 2,
                           ),
                           value: widget.completed,

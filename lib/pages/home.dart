@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
+import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/dialogues/change_theme_dialogue.dart';
 import 'package:sarims_todo_app/dialogues/credits.dart';
+import 'package:sarims_todo_app/utils/ui_banners/you_have_no_tasks_banner.dart';
 import 'package:sarims_todo_app/widgets/home_page_drawer.dart';
 import 'package:sarims_todo_app/widgets/no_internet_indicator.dart';
 import 'package:sarims_todo_app/widgets/refreshing_data_indicator.dart';
@@ -38,7 +40,7 @@ class _HomePageState extends State<HomePage> {
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!DateTime.now().isBefore(nextUpdateAt) && timer.isActive) {
-        if (await checkServerUpdateAppointmentStatus()) {
+        if (checkServerUpdateAppointmentStatus()) {
           await uploadTaskData();
         } else {
           if (!isFirstUpdate) {
@@ -92,6 +94,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: StreamBuilder(
+          // Checking internet availability
           stream: InternetConnectivity().observeInternetConnection,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -100,6 +103,9 @@ class _HomePageState extends State<HomePage> {
                 alignment: AlignmentDirectional.topStart,
                 children: [
                   FutureBuilder(
+                      // Check if it is the first update, if it is,
+                      // then load data from the servers instead of
+                      // local storage
                       future: isFirstUpdate
                           ? db.getTaskDataFromServer()
                           : Future.sync(() => db.loadData()),
@@ -107,6 +113,8 @@ class _HomePageState extends State<HomePage> {
                         isFirstUpdate = false;
 
                         var taskList = db.taskList;
+                        // Add an empty space to the top of the list if
+                        // a banner needss to be placed.
                         List<Widget> taskDisplayList = [
                           SizedBox(
                             height:
@@ -116,50 +124,82 @@ class _HomePageState extends State<HomePage> {
                           ),
                           ...taskList.map((taskData) {
                             return TaskCard(
-                                taskName: taskData[0],
-                                completed: taskData[1],
-                                onTaskCheckChange: isRefreshing || isUploading
-                                    ? () {}
-                                    : onTaskCheckChange,
-                                onDelete: isRefreshing || isUploading
-                                    ? () {}
-                                    : deleteTask,
-                                reorderingMode: reorderMode);
+                              key: UniqueKey(),
+                              taskName: taskData[0],
+                              completed: taskData[1],
+                              onTaskCheckChange: isRefreshing || isUploading
+                                  ? (taskName, completed) {}
+                                  : onTaskCheckChange,
+                              onDelete: isRefreshing || isUploading
+                                  ? (taskName) {}
+                                  : deleteTask,
+                              reorderingMode: reorderMode,
+                              enabled: !(isUploading || isRefreshing),
+                            );
                           }).toList()
                         ];
 
                         if (snapshot.hasData) {
-                          return reorderMode
-                              ? ReorderableListView.builder(
-                                  header:
-                                      SizedBox(height: hasConnection ? 0 : 40),
-                                  // buildDefaultDragHandles: true,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 6, 0, 0),
-                                  itemCount: taskList.length,
-                                  itemBuilder: (context, index) {
-                                    return TaskCard(
-                                      key: UniqueKey(),
-                                      taskName: taskList[index][0],
-                                      completed: taskList[index][1],
-                                      onTaskCheckChange: onTaskCheckChange,
-                                      onDelete: deleteTask,
-                                      reorderingMode: reorderMode,
-                                    );
-                                  },
-                                  onReorder: onReorder,
-                                )
-                              : RefreshIndicator(
-                                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                                  key: GlobalKey<RefreshIndicatorState>(),
-                                  onRefresh: refreshList,
-                                  child: ListView(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 6, 0, 0),
-                                    clipBehavior: Clip.antiAlias,
-                                    children: taskDisplayList,
-                                  ),
-                                );
+                          return RefreshIndicator(
+                            backgroundColor:
+                                Theme.of(context).scaffoldBackgroundColor,
+                            key: GlobalKey<RefreshIndicatorState>(),
+                            onRefresh: refreshList,
+                            // Check if reorder mode is turned on
+                            child: reorderMode
+                                ? taskList.isNotEmpty
+                                    ? ReorderableListView(
+                                        header: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.center,
+                                              height: 30,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                color: Colors.yellow[700],
+                                                
+                                              ),
+                                              child: const Text(
+                                                "Reorder Mode",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                height: !hasConnection ||
+                                                        isRefreshing ||
+                                                        isUploading
+                                                    ? 40
+                                                    : 0),
+                                          ],
+                                        ),
+                                        // buildDefaultDragHandles: true,
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 0, 0, 0),
+                                        onReorder: onReorder,
+                                        children: taskDisplayList.sublist(1),
+                                      )
+                                    : taskList.isNotEmpty
+                                        ? ListView(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 6, 0, 0),
+                                            clipBehavior: Clip.antiAlias,
+                                            children: taskDisplayList)
+                                        : const YouHaveNoTasksBanner()
+                                : taskList.isNotEmpty
+                                    ? ListView(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 6, 0, 0),
+                                        clipBehavior: Clip.antiAlias,
+                                        children: taskDisplayList)
+                                    : const YouHaveNoTasksBanner(),
+                          );
                         } else {
                           return const Center(
                               child: CircularProgressIndicator());
@@ -311,10 +351,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> refreshList() async {
-    nextUpdateAt = DateTime.now();
-    return checkServerUpdateAppointmentStatus()
-        ? await uploadTaskData()
-        : await refreshTaskData();
+    if (!isUploading && !isRefreshing) {
+      nextUpdateAt = DateTime.now();
+      return checkServerUpdateAppointmentStatus()
+          ? await uploadTaskData()
+          : await refreshTaskData();
+    }
   }
 
   void onReorder(int oldIndex, int newIndex) async {

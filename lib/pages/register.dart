@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
-import 'package:sarims_todo_app/pages/home.dart';
+// ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter/material.dart';
+import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import '../config.dart';
 import '../data_ops/user_session_cloud_ops.dart';
 import 'login.dart';
@@ -288,7 +287,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
           final registerUserResult = await registerUser(
               usernameController.text, passwordController.text);
-          print(registerUserResult);
+
           // Check if there was an error
           if (registerUserResult != "ERROR") {
             // Register User

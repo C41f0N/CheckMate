@@ -30,7 +30,7 @@ class ChangeThemeDialogue extends StatelessWidget {
                 currentTheme.setPrimarySwatch(color as MaterialColor);
               },
             ),
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             Text(
               "Tip: Refresh the list to see minor changes take effect.",
               textAlign: TextAlign.center,

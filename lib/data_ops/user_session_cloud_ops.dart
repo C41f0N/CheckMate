@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:sarims_todo_app/data_ops/encryption.dart';
@@ -62,7 +61,6 @@ Future<bool> changePasswordOnServer(String newPassword) async {
     var result = await http.get(Uri.parse(
         "https://sarimahmed.tech/sarim-s_todo_app/change_pass.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(oldHash)}&new_hash=${Uri.encodeComponent(newHash)}"));
     if ((result.statusCode / 100).floor() == 2) {
-      print(result.body);
       return result.body == "1";
     } else {
       return false;
