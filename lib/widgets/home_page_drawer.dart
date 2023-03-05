@@ -11,12 +11,14 @@ class HomePageDrawer extends StatefulWidget {
     required this.showChangeThemeMethod,
     required this.changePasswordMethod,
     required this.showCreditsDialogMethod,
+    required this.deleteCheckedTasksMethod,
   });
 
   final Function() logoutMethod;
   final Function() showChangeThemeMethod;
   final Function() changePasswordMethod;
   final Function() showCreditsDialogMethod;
+  final Function() deleteCheckedTasksMethod;
 
   @override
   State<HomePageDrawer> createState() => _HomePageDrawerState();
@@ -41,6 +43,31 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                     fontWeight: FontWeight.bold),
               ),
             ),
+          ),
+          ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.remove_done,
+                  color: currentTheme.isDark()
+                      ? Colors.grey[900]
+                      : Colors.grey[200],
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  "Remove Checked",
+                  style: TextStyle(
+                    color: currentTheme.isDark()
+                        ? Colors.grey[900]
+                        : Colors.grey[200],
+                  ),
+                ),
+              ],
+            ),
+            onTap: widget.deleteCheckedTasksMethod,
           ),
           ListTile(
             title: Row(

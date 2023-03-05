@@ -147,4 +147,9 @@ class TaskDatabase {
       return "0";
     }
   }
+
+  void deleteCheckedTasks() {
+    taskList.removeWhere((taskData) => taskData[1] == true);
+    saveData();
+  }
 }

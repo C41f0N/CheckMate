@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
-import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/dialogues/change_theme_dialogue.dart';
 import 'package:sarims_todo_app/dialogues/credits.dart';
@@ -70,9 +69,15 @@ class _HomePageState extends State<HomePage> {
         showChangeThemeMethod: showThemeChangeDialogue,
         changePasswordMethod: changePassword,
         showCreditsDialogMethod: showCreditsDialog,
+        deleteCheckedTasksMethod: deleteCheckedTasks,
       ),
       appBar: AppBar(
-        title: const Text("T O - D O   L I S T"),
+        backgroundColor: reorderMode
+            ? Theme.of(context).primaryColor.withAlpha(200)
+            : Theme.of(context).primaryColor,
+        title: !reorderMode
+            ? const Text("T O - D O   L I S T")
+            : const Text("R E O R D E R   M O D E"),
         centerTitle: true,
         actions: [
           !(Platform.isAndroid || Platform.isIOS) && !userModifyingData
@@ -150,22 +155,6 @@ class _HomePageState extends State<HomePage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
                                         children: [
-                                          Container(
-                                            alignment: Alignment.center,
-                                            height: 30,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            decoration: BoxDecoration(
-                                              color: Colors.yellow[700],
-                                            ),
-                                            child: const Text(
-                                              "Reorder Mode",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
                                           const SizedBox(
                                             height: 6,
                                           ),
@@ -452,4 +441,45 @@ class _HomePageState extends State<HomePage> {
   void showCreditsDialog() {
     showDialog(context: context, builder: ((context) => const Credits()));
   }
+
+  void deleteCheckedTasks() {
+    if (!isUploading && !isRefreshing) {setState(() {
+      userModifyingData = true;
+    });
+    Navigator.of(context).pop();
+    showDialog(
+      context: context,
+      builder: ((context) => AlertDialog(
+            title: const Text(
+              "Remove all completed tasks?",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: (() {
+                  db.deleteCheckedTasks();
+                  setUpdateAppointmentWithServerStatus(true);
+                  setState(() {});
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text("Removed completed tasks. ")));
+                }),
+                child: const Text("Yes"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("No"),
+              )
+            ],
+          )),
+    ).then((value) {
+      setState(() {
+        userModifyingData = false;
+      });
+    });
+  }}
 }

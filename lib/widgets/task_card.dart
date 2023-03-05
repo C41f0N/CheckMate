@@ -39,7 +39,7 @@ class _TaskCardState extends State<TaskCard> {
         6,
       ),
       child: Slidable(
-        enabled: widget.enabled,
+        enabled: widget.enabled && !widget.reorderingMode,
         startActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
@@ -114,6 +114,7 @@ class _TaskCardState extends State<TaskCard> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: AutoSizeText(
+                      minFontSize: 20,
                       widget.taskName,
                       style: TextStyle(
                         color: currentTheme.isDark()
