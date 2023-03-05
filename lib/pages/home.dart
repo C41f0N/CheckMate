@@ -432,6 +432,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void showThemeChangeDialogue() {
+    Navigator.of(context).pop();
     showDialog(
       context: context,
       builder: (context) => const ChangeThemeDialogue(),
@@ -439,6 +440,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void showCreditsDialog() {
+    Navigator.of(context).pop();
     showDialog(context: context, builder: ((context) => const Credits()));
   }
 
