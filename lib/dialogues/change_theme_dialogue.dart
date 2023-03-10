@@ -16,7 +16,7 @@ class ChangeThemeDialogue extends StatelessWidget {
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       content: SizedBox(
-        height: 200,
+        height: 250,
         width: 200,
         child: Column(
           mainAxisSize: MainAxisSize.min,

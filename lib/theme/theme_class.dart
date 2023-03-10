@@ -14,7 +14,14 @@ class AppTheme with ChangeNotifier {
     'brown' : Colors.brown,
     'lightBlue' : Colors.lightBlue,
     'orange' : Colors.orange,
-    
+    'cyan' : Colors.cyan,
+    'deepPurple': Colors.deepPurple,
+    'indigo': Colors.indigo,
+    'amber': Colors.amber,
+    'line': Colors.lime,
+    'blueGrey': Colors.blueGrey,
+    'deepOrange': Colors.deepOrange,
+    'teal': Colors.teal,
   };
 
   Map<MaterialColor, bool> colorDarkStatus = {
@@ -27,6 +34,14 @@ class AppTheme with ChangeNotifier {
     Colors.brown: false,
     Colors.lightBlue: true,
     Colors.orange: true,
+    Colors.cyan: true,
+    Colors.deepPurple: false,
+    Colors.indigo: false,
+    Colors.amber: true,
+    Colors.lime: true,
+    Colors.blueGrey: false,
+    Colors.deepOrange: false,
+    Colors.teal: false, 
   };
 
 
