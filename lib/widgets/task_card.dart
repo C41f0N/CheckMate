@@ -4,7 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sarims_todo_app/config.dart';
 
 class TaskCard extends StatefulWidget {
-  const TaskCard(
+  TaskCard(
       {super.key,
       required this.taskName,
       required this.completed,
@@ -14,7 +14,7 @@ class TaskCard extends StatefulWidget {
       required this.enabled});
 
   final String taskName;
-  final bool completed;
+  bool completed;
   final Function onTaskCheckChange;
   final Function onDelete;
   final bool reorderingMode;
@@ -54,7 +54,9 @@ class _TaskCardState extends State<TaskCard> {
         child: GestureDetector(
           onTap: () {
             if (!widget.reorderingMode && widget.enabled) {
+              widget.completed = !widget.completed;
               widget.onTaskCheckChange(widget.taskName, widget.completed);
+              setState(() {});
             }
           },
           child: Container(

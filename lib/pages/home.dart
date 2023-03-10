@@ -224,10 +224,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onTaskCheckChange(String taskName, bool completed) {
-    setState(() {
-      db.changeCompleteStatus(taskName);
-      setUpdateAppointmentWithServerStatus(true);
-    });
+    db.changeCompleteStatus(taskName);
+    setUpdateAppointmentWithServerStatus(true);
   }
 
   void addTask(String taskName) {
@@ -445,43 +443,45 @@ class _HomePageState extends State<HomePage> {
   }
 
   void deleteCheckedTasks() {
-    if (!isUploading && !isRefreshing) {setState(() {
-      userModifyingData = true;
-    });
-    Navigator.of(context).pop();
-    showDialog(
-      context: context,
-      builder: ((context) => AlertDialog(
-            title: const Text(
-              "Remove all completed tasks?",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: (() {
-                  db.deleteCheckedTasks();
-                  setUpdateAppointmentWithServerStatus(true);
-                  setState(() {});
-                  Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Removed completed tasks. ")));
-                }),
-                child: const Text("Yes"),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("No"),
-              )
-            ],
-          )),
-    ).then((value) {
+    if (!isUploading && !isRefreshing) {
       setState(() {
-        userModifyingData = false;
+        userModifyingData = true;
       });
-    });
-  }}
+      Navigator.of(context).pop();
+      showDialog(
+        context: context,
+        builder: ((context) => AlertDialog(
+              title: const Text(
+                "Remove all completed tasks?",
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: (() {
+                    db.deleteCheckedTasks();
+                    setUpdateAppointmentWithServerStatus(true);
+                    setState(() {});
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Removed completed tasks. ")));
+                  }),
+                  child: const Text("Yes"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("No"),
+                )
+              ],
+            )),
+      ).then((value) {
+        setState(() {
+          userModifyingData = false;
+        });
+      });
+    }
+  }
 }
