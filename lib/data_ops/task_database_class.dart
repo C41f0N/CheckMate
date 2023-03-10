@@ -152,4 +152,12 @@ class TaskDatabase {
     taskList.removeWhere((taskData) => taskData[1] == true);
     saveData();
   }
+
+  void editTaskName(String oldTaskName, String newTaskName) {
+    var taskIndex = taskList.indexWhere((taskData) => taskData[0] == oldTaskName);
+    var oldTaskData = taskList[taskIndex];
+    oldTaskData[0] = newTaskName;
+    taskList[taskIndex] = oldTaskData;
+    saveData();
+  }
 }

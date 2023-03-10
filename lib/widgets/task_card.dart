@@ -11,7 +11,8 @@ class TaskCard extends StatefulWidget {
       required this.onTaskCheckChange,
       required this.onDelete,
       required this.reorderingMode,
-      required this.enabled});
+      required this.enabled,
+      required this.onEditTaskName});
 
   final String taskName;
   bool completed;
@@ -19,6 +20,7 @@ class TaskCard extends StatefulWidget {
   final Function onDelete;
   final bool reorderingMode;
   final bool enabled;
+  final Function onEditTaskName;
 
   @override
   State<TaskCard> createState() => _TaskCardState();
@@ -27,6 +29,10 @@ class TaskCard extends StatefulWidget {
 class _TaskCardState extends State<TaskCard> {
   void onDeleteWithContext(BuildContext context) {
     widget.onDelete(widget.taskName);
+  }
+
+  void onEditTaskNameWithContext (BuildContext context) {
+    widget.onEditTaskName(widget.taskName);
   }
 
   @override
@@ -48,6 +54,17 @@ class _TaskCardState extends State<TaskCard> {
               backgroundColor: Colors.red[700]!,
               icon: Icons.delete,
               onPressed: onDeleteWithContext,
+            ),
+          ],
+        ),
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              borderRadius: BorderRadius.circular(4),
+              backgroundColor: Colors.yellow[700]!,
+              icon: Icons.edit,
+              onPressed: onEditTaskNameWithContext,
             ),
           ],
         ),

@@ -13,6 +13,7 @@ import 'package:sarims_todo_app/widgets/refreshing_data_indicator.dart';
 import 'package:sarims_todo_app/widgets/task_card.dart';
 import '../data_ops/user_session_local_ops.dart';
 import '../dialogues/add_task_dialogue.dart';
+import '../dialogues/edit_task_dialogue.dart';
 import '../widgets/uploading_data_indicator.dart';
 
 class HomePage extends StatefulWidget {
@@ -143,6 +144,7 @@ class _HomePageState extends State<HomePage> {
                                   : deleteTask,
                               reorderingMode: reorderMode,
                               enabled: !(isUploading || isRefreshing),
+                              onEditTaskName: onEditTaskName,
                             );
                           }).toList()
                         ];
@@ -416,7 +418,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  onChangedPassword() {
+  void onChangedPassword() {
     removeLoginInfoFromDevice();
     Navigator.of(context)
         .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
@@ -483,5 +485,23 @@ class _HomePageState extends State<HomePage> {
         });
       });
     }
+  }
+
+  void onEditTaskName(String oldTaskName) {
+    setState(() {
+      userModifyingData = true;
+    });
+    showDialog(
+        context: context,
+        builder: ((context) => EditTaskDialogue(
+              checkTaskExistenceCallback: db.checkTaskExistence,
+              editTaskName: db.editTaskName,
+              oldTaskName: oldTaskName,
+            ))).then((value) {
+      setState(() {
+        userModifyingData = false;
+        setUpdateAppointmentWithServerStatus(true);
+      });
+    });
   }
 }
