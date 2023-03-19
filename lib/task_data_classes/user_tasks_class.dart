@@ -1,7 +1,7 @@
 import 'package:sarims_todo_app/task_data_classes/task_class.dart';
 import 'package:sarims_todo_app/task_data_classes/task_list_class.dart';
 
-class UserTasks {
+class UserTasksData {
   List<TaskList> taskLists = [];
 
   // To create default data
@@ -15,8 +15,86 @@ class UserTasks {
     ];
   }
 
+  // Toggle task completion
+  toggleTaskCompletion(String taskListName, String taskName) {
+    taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .tasksList
+        .firstWhere((task) => task.taskName == taskName)
+        .toggleCompletion();
+  }
+
+  // Add new task to a list
+  addTaskToList(String taskListName, String taskName) {
+    taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .addTask(taskName);
+  }
+
+  // Insert a task object at a specific index
+  addTaskToListAtIndex(String taskListName, Task task, int index) {
+    taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .addTaskAtIndex(task, index);
+  }
+
+  // Check if a task exists
+  bool checkTaskExistence(String taskListName, String taskName) {
+    return taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .checkTaskExistence(taskName);
+  }
+
+  // Delete a task by name
+  deleteTask(String taskListName, String taskName) {
+    taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .deleteTask(taskName);
+  }
+
+  // Delete task at specific index
+  Task deleteTaskAtIndex(String taskListName, int index) {
+    return taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .deleteTaskAtIndex(index);
+  }
+
+  // Edit a task's name
+  editTaskName(String taskListName, String oldTaskName, String newTaskName) {
+    taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .editTaskName(oldTaskName, newTaskName);
+  }
+
+  // Get index of a task in a list
+  getTaskIndex(String taskListName, String taskName) {
+    taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .getTaskIndex(taskName);
+  }
+
+  // get Task object from its index
+  Task getTaskFromIndex(String taskListName, int index) {
+    return taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .getTaskFromIndex(index);
+  }
+
+  List<Task> getTaskList(String taskListName) {
+    return taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .tasksList;
+  }
+
+  // Delete all checked tasks
+  deleteCheckedTasks(String taskListName) {
+    taskLists
+        .firstWhere((taskListData) => taskListData.listName == taskListName)
+        .deleteCheckedTasks();
+  }
+
   // To generate a UserTask instance from previously parsed data
-  parse(String stringUserData) {
+  parseFromString(String stringUserData) {
     // empty previously held data
     taskLists = [];
 
@@ -45,6 +123,7 @@ class UserTasks {
     }
   }
 
+  // To parse the UserTasks class into String
   asString() {
     // An empty list of string to dump all TaskLists in UserTasks
     List<String> userTasksStringDump = [];

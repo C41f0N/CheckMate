@@ -14,6 +14,7 @@ import 'package:sarims_todo_app/widgets/task_card.dart';
 import '../data_ops/user_session_local_ops.dart';
 import '../dialogues/add_task_dialogue.dart';
 import '../dialogues/edit_task_dialogue.dart';
+import '../task_data_classes/task_class.dart';
 import '../widgets/uploading_data_indicator.dart';
 
 class HomePage extends StatefulWidget {
@@ -122,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, snapshot) {
                         isFirstUpdate = false;
 
-                        var taskList = db.taskList;
+                        var taskList = db.getTaskList();
                         // Add an empty space to the top of the list if
                         // a banner needss to be placed.
                         List<Widget> taskDisplayList = [
@@ -132,11 +133,11 @@ class _HomePageState extends State<HomePage> {
                                     ? 40
                                     : 0,
                           ),
-                          ...taskList.map((taskData) {
+                          ...taskList.map((Task task) {
                             return TaskCard(
                               key: UniqueKey(),
-                              taskName: taskData[0],
-                              completed: taskData[1],
+                              taskName: task.taskName,
+                              completed: task.checked,
                               onTaskCheckChange: isRefreshing || isUploading
                                   ? (taskName, completed) {}
                                   : onTaskCheckChange,
@@ -244,10 +245,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void deleteTask(String taskName) {
-    int index = db.taskList.indexWhere(
-      (element) => element[0] == taskName,
-    );
-    List deletedTask = db.taskList[index];
+    int index = db.getTaskIndex(taskName);
+    Task deletedTask = db.getTaskFromIndex(index);
     db.deleteTask(taskName);
     setUpdateAppointmentWithServerStatus(true);
     setState(() {});
@@ -364,7 +363,7 @@ class _HomePageState extends State<HomePage> {
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }
-    List removedtask = db.deleteTaskAtIndex(oldIndex);
+    Task removedtask = db.deleteTaskAtIndex(oldIndex);
     db.addTaskAtIndex(removedtask, newIndex);
     setUpdateAppointmentWithServerStatus(true);
     setState(() {});

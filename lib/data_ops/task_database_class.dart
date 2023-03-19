@@ -2,93 +2,73 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sarims_todo_app/data_ops/encryption.dart';
 import 'package:sarims_todo_app/data_ops/task_data_from_cloud.dart';
 import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
+import 'package:sarims_todo_app/task_data_classes/user_tasks_class.dart';
+
+import '../task_data_classes/task_class.dart';
 
 class TaskDatabase {
-  List<List<dynamic>> taskList = [];
+  UserTasksData tasksData = UserTasksData();
+  String? focusedTaskListName;
   final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
 
   void createDefaultData() {
-    taskList = [
-      ["Clean Car", true],
-      ["Kill Sarim", false],
-      ["Hide Body", false],
-      ["File Missing Person's Report", false],
-    ];
+    focusedTaskListName = "Main Tasks";
+    tasksData.createDefaultData();
   }
 
   bool loadData() {
-    if (_myBox.get("TASKS_LIST") == null) {
+    if (_myBox.get("USER_TASKS_DATA") == null) {
       // Create defaults and save
       createDefaultData();
       saveData();
     } else {
-      // fetch data from server
-      List<String> combinedStringList = _myBox.get('TASKS_LIST');
-      taskList = [];
-      for (var element in combinedStringList) {
-        List<dynamic> taskData = element.split("||");
-        String taskName = taskData[0];
-        bool completed = taskData[1] == "true";
-        taskList.add([taskName, completed]);
-      }
+      // fetch data from Hive
+      String combinedStringData = _myBox.get('USER_TASKS_DATA');
+
+      // parse the data
+      tasksData.parseFromString(combinedStringData);
     }
     return true;
   }
 
   void saveData() {
-    List<String> combinedStringList = [];
-    for (var taskData in taskList) {
-      List newTaskData = [taskData[0], ""];
-      newTaskData[1] = taskData[1] ? "true" : "false";
-      combinedStringList.add(newTaskData.join("||"));
-    }
-
-    _myBox.put("TASKS_LIST", combinedStringList);
+    _myBox.put("USER_TASKS_DATA", tasksData.asString());
     // uploadDataToServer();
   }
 
   void changeCompleteStatus(String taskName) {
-    int index = taskList.indexWhere((taskData) => taskData[0] == taskName);
-    taskList[index][1] = !taskList[index][1];
+    // Get the tasks list
+    tasksData.toggleTaskCompletion(focusedTaskListName!, taskName);
     saveData();
   }
 
   void addTask(String taskName) {
-    taskList.insert(0, [taskName, false]);
+    tasksData.addTaskToList(focusedTaskListName!, taskName);
     saveData();
   }
 
-  void addTaskAtIndex(List task, int index) {
-    taskList.insert(index, task);
+  void addTaskAtIndex(Task task, int index) {
+    tasksData.addTaskToListAtIndex(focusedTaskListName!, task, index);
     saveData();
   }
 
   bool checkTaskExistence(String taskName) {
     loadData();
-    int index = taskList.indexWhere((element) => element[0] == taskName);
-    return index != -1;
+    return tasksData.checkTaskExistence(focusedTaskListName!, taskName);
   }
 
   void deleteTask(String taskName) {
-    taskList.removeWhere((element) => element[0] == taskName);
+    tasksData.deleteTask(focusedTaskListName!, taskName);
     saveData();
   }
 
-  List deleteTaskAtIndex(int index) {
-    saveData();
-    return taskList.removeAt(index);
+  Task deleteTaskAtIndex(int index) {
+    return tasksData.deleteTaskAtIndex(focusedTaskListName!, index);
   }
 
   Future<String> uploadDataToServer() async {
-    List<String> combinedStringList = [];
+    String taskDataString = tasksData.asString();
 
-    for (var taskData in taskList) {
-      List newTaskData = [taskData[0], ""];
-      newTaskData[1] = taskData[1] ? "true" : "false";
-      combinedStringList.add(newTaskData.join("||"));
-    }
-
-    String taskDataString = combinedStringList.join("|||");
     if (getSessionEncryptionKey().isNotEmpty) {
       taskDataString = taskDataString.isEmpty ? "NO_DATA" : taskDataString;
       final encryptedData =
@@ -113,25 +93,15 @@ class TaskDatabase {
             decryptTaskData(encryptedData, getSessionEncryptionKey());
         // Check if Decrypted Data has no tasks
         if (extractTaskData(decryptedData) == "NO_DATA") {
-          taskList = [];
+          tasksData.parseFromString("");
           saveData();
           return '1';
         } else
+
         // Verify Decrypted Data
         {
           if (verifyDecryptedData(decryptedData)) {
-            // print(decryptedData);
-            var combinedStringTaskData =
-                extractTaskData(decryptedData).split("|||");
-            taskList = [];
-
-            for (var element in combinedStringTaskData) {
-              List<dynamic> taskData = element.split("||");
-
-              String taskName = taskData[0];
-              bool completed = taskData[1] == "true";
-              taskList.add([taskName, completed]);
-            }
+            tasksData.parseFromString(extractTaskData(decryptedData));
             saveData();
             return "1";
           } else {
@@ -149,15 +119,24 @@ class TaskDatabase {
   }
 
   void deleteCheckedTasks() {
-    taskList.removeWhere((taskData) => taskData[1] == true);
+    tasksData.deleteCheckedTasks(focusedTaskListName!);
     saveData();
   }
 
   void editTaskName(String oldTaskName, String newTaskName) {
-    var taskIndex = taskList.indexWhere((taskData) => taskData[0] == oldTaskName);
-    var oldTaskData = taskList[taskIndex];
-    oldTaskData[0] = newTaskName;
-    taskList[taskIndex] = oldTaskData;
-    saveData();
+   tasksData.editTaskName(focusedTaskListName!, oldTaskName, newTaskName);
+   saveData();
+  }
+  
+  int getTaskIndex(String taskName) {
+    return tasksData.getTaskIndex(focusedTaskListName!, taskName);
+  }
+  
+  Task getTaskFromIndex(int index) {
+    return tasksData.getTaskFromIndex(focusedTaskListName!, index);
+  }
+
+  List<Task> getTaskList() {
+    return tasksData.getTaskList(focusedTaskListName!);
   }
 }
