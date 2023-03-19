@@ -69,13 +69,7 @@ class _TaskCardState extends State<TaskCard> {
           ],
         ),
         child: GestureDetector(
-          onTap: () {
-            if (!widget.reorderingMode && widget.enabled) {
-              widget.completed = !widget.completed;
-              widget.onTaskCheckChange(widget.taskName, widget.completed);
-              setState(() {});
-            }
-          },
+          onTap: onTap,
           child: Container(
             key: UniqueKey(),
             alignment: Alignment.center,
@@ -121,14 +115,9 @@ class _TaskCardState extends State<TaskCard> {
                             width: 2,
                           ),
                           value: widget.completed,
-                          onChanged: ((completed) {
-                            if (!widget.reorderingMode) {
-                              widget.onTaskCheckChange(
-                                widget.taskName,
-                                completed,
-                              );
-                            }
-                          }),
+                          onChanged: (checked) {
+                            onTap();
+                          },
                         ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
@@ -159,4 +148,12 @@ class _TaskCardState extends State<TaskCard> {
       ),
     );
   }
+
+  void onTap() {
+            if (!widget.reorderingMode && widget.enabled) {
+              widget.completed = !widget.completed;
+              widget.onTaskCheckChange(widget.taskName, widget.completed);
+              setState(() {});
+            }
+          }
 }

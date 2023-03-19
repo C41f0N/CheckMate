@@ -77,7 +77,8 @@ class _HomePageState extends State<HomePage> {
             ? Theme.of(context).primaryColor.withAlpha(200)
             : Theme.of(context).primaryColor,
         title: !reorderMode
-            ? const Text("T O - D O   L I S T")
+            ? const Text("C H E C K    M A T E")
+            // ? const Text("T O - D O   L I S T")
             : const Text("R E O R D E R   M O D E"),
         centerTitle: true,
         actions: [

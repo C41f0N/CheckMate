@@ -34,7 +34,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
             child: Container(
               alignment: Alignment.bottomLeft,
               child: AutoSizeText(
-                "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s To Do List",
+                "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
                 style: TextStyle(
                     color: currentTheme.isDark()
                         ? Colors.grey[900]

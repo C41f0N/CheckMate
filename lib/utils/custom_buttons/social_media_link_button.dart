@@ -15,7 +15,7 @@ class SocialMediaLinkButton extends StatelessWidget {
         },
         icon: Icon(
           iconData,
-          color: Colors.white,
+          color: Colors.grey[200],
           size: 30,
         ));
   }
