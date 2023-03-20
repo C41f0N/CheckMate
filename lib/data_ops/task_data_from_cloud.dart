@@ -10,7 +10,6 @@ Future<String> fetchEncryptedDataFromServer() async {
   try {
     final result = await http.get(Uri.parse(
         'https://sarimahmed.tech/sarim-s_todo_app/get_task_data.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}'));
-        print(result.body);
     return result.body;
   } on Exception catch (_) {
     return "";

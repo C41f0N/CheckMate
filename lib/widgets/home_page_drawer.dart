@@ -44,133 +44,71 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
               ),
             ),
           ),
-          ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.remove_done,
-                  color: currentTheme.isDark()
-                      ? Colors.grey[900]
-                      : Colors.grey[200],
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  "Remove Checked",
-                  style: TextStyle(
-                    color: currentTheme.isDark()
-                        ? Colors.grey[900]
-                        : Colors.grey[200],
-                  ),
-                ),
-              ],
-            ),
+          DrawerButton(
             onTap: widget.deleteCheckedTasksMethod,
+            label: "Remove Checked",
+            iconData: Icons.remove_done,
           ),
-          ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.color_lens,
-                  color: currentTheme.isDark()
-                      ? Colors.grey[900]
-                      : Colors.grey[200],
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  "Change Theme",
-                  style: TextStyle(
-                    color: currentTheme.isDark()
-                        ? Colors.grey[900]
-                        : Colors.grey[200],
-                  ),
-                ),
-              ],
-            ),
+          DrawerButton(
             onTap: widget.showChangeThemeMethod,
+            label: "Change Theme",
+            iconData: Icons.color_lens,
           ),
-          ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.password,
-                  color: currentTheme.isDark()
-                      ? Colors.grey[900]
-                      : Colors.grey[200],
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  "Change Password",
-                  style: TextStyle(
-                    color: currentTheme.isDark()
-                        ? Colors.grey[900]
-                        : Colors.grey[200],
-                  ),
-                ),
-              ],
-            ),
+          DrawerButton(
             onTap: widget.changePasswordMethod,
+            label: "Change Password",
+            iconData: Icons.password,
           ),
-          ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.logout,
-                  color: currentTheme.isDark()
-                      ? Colors.grey[900]
-                      : Colors.grey[200],
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  "Logout",
-                  style: TextStyle(
-                    color: currentTheme.isDark()
-                        ? Colors.grey[900]
-                        : Colors.grey[200],
-                  ),
-                ),
-              ],
-            ),
+          DrawerButton(
             onTap: widget.logoutMethod,
+            label: "Logout",
+            iconData: Icons.logout,
           ),
-          ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.info,
-                  color: currentTheme.isDark()
-                      ? Colors.grey[900]
-                      : Colors.grey[200],
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  "Credits",
-                  style: TextStyle(
-                    color: currentTheme.isDark()
-                        ? Colors.grey[900]
-                        : Colors.grey[200],
-                  ),
-                ),
-              ],
-            ),
+          DrawerButton(
             onTap: widget.showCreditsDialogMethod,
+            label: "Credits",
+            iconData: Icons.info,
           ),
         ],
       ),
+    );
+  }
+}
+
+class DrawerButton extends StatelessWidget {
+  const DrawerButton(
+      {super.key,
+      required this.onTap,
+      required this.label,
+      required this.iconData});
+
+  final String label;
+  final IconData iconData;
+  final void Function()? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Icon(
+            iconData,
+            color: currentTheme.isDark() ? Colors.grey[900] : Colors.grey[200],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              color:
+                  currentTheme.isDark() ? Colors.grey[900] : Colors.grey[200],
+            ),
+          ),
+        ],
+      ),
+      onTap: onTap,
     );
   }
 }

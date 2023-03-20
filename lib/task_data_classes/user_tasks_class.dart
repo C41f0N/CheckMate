@@ -6,8 +6,9 @@ class UserTasksData {
 
   // To create default data
   createDefaultData() {
+    print("Creating default data");
     taskLists = [
-      TaskList("Important Stuff", [
+      TaskList("Main Tasks", [
         Task("Feed Dog", false),
         Task("Make Bed", false),
         Task("Work on world domination plan", true),
@@ -81,9 +82,47 @@ class UserTasksData {
   }
 
   List<Task> getTaskList(String taskListName) {
-    return taskLists
-        .firstWhere((taskListData) => taskListData.listName == taskListName)
-        .tasksList;
+    if (checkTaskListExistance(taskListName)) {
+      return taskLists
+          .firstWhere(
+            (TaskList taskListData) => taskListData.listName == taskListName,
+          )
+          .tasksList;
+    } else {
+      return [];
+    }
+  }
+
+  // Get All List Names
+  List<String> getListNames() {
+    List<String> listNames = [];
+    for (TaskList taskListData in taskLists) {
+      listNames.add(taskListData.listName);
+    }
+    return listNames;
+  }
+
+  // Add new taskList to UserData
+  addNewList(String listName) {
+    if (!checkTaskListExistance(listName)) {
+      TaskList newListDataObj = TaskList(listName, []);
+      taskLists.add(newListDataObj);
+    }
+  }
+
+  // Delete a taskList from UserData
+  deleteTaskList(String listName) {
+    if (taskLists.length > 1) {
+      taskLists.removeWhere(
+          (TaskList taskListData) => taskListData.listName == listName);
+    }
+  }
+
+  // Check if a task list exists
+  bool checkTaskListExistance(String taskListName) {
+    return taskLists.indexWhere(
+            (TaskList taskListData) => taskListData.listName == taskListName) !=
+        -1;
   }
 
   // Delete all checked tasks
@@ -95,45 +134,55 @@ class UserTasksData {
 
   // To generate a UserTask instance from previously parsed data
   parseFromString(String stringUserData) {
-    // empty previously held data
-    taskLists = [];
+    print("String User Data: $stringUserData");
+    if (stringUserData.isNotEmpty) {
+      // empty previously held data
+      taskLists = [];
 
-    // Split String into individual taskListData
-    List<String> allTaskListDataInString = stringUserData.split("|||");
+      // Split String into individual taskListData
+      List<String> allTaskListDataInString = stringUserData.split("^||||^");
 
-    for (String taskListDataInString in allTaskListDataInString) {
-      // Split each taskListData into taskListName and tasksList(in String form / non parsed)
-      taskListDataInString.split("||");
-      String taskListName = taskListDataInString[0];
-      List<String> taskListInString = taskListDataInString[1].split("||");
+      // For each taskListData
+      for (String taskListDataInString in allTaskListDataInString) {
+        // Split each taskListData into taskListName and tasksList(in String form / non parsed)
+        String taskListName = taskListDataInString.split("^|||^")[0];
+        List<String> taskListInString =
+            taskListDataInString.split("^|||^")[1].split("^||^");
 
-      // Parse tasksList into a List<Task>
-      List<Task> tasksList = taskListInString.map((String taskDataInString) {
-        String taskName = taskDataInString.split("|")[0];
-        bool checked = taskDataInString.split("|")[1] == "true";
+        // Parse tasksList into a List<Task>
 
-        return Task(taskName, checked);
-      }).toList();
+        List<Task> tasksList = [];
+        if (taskListInString.isNotEmpty && taskListInString[0].isNotEmpty) {
+          tasksList = taskListInString.map((String taskDataInString) {
+            String taskName = taskDataInString.split("^|^")[0];
+            bool checked = taskDataInString.split("^|^")[1] == "true";
 
-      // Create a TaskList instance from parsed data
-      TaskList parsedTaskList = TaskList(taskListName, tasksList);
+            return Task(taskName, checked);
+          }).toList();
+        }
 
-      // add TaskList to the taskLists array
-      taskLists.add(parsedTaskList);
+        // Create a TaskList instance from parsed data
+        TaskList parsedTaskList = TaskList(taskListName, tasksList);
+
+        // add TaskList to the taskLists array
+        taskLists.add(parsedTaskList);
+      }
+    } else {
+      taskLists = [];
     }
   }
 
   // To parse the UserTasks class into String
-  asString() {
+  String asString() {
     // An empty list of string to dump all TaskLists in UserTasks
     List<String> userTasksStringDump = [];
 
     // For every task list
     for (TaskList taskList in taskLists) {
-      // An empty list of string to dump taskList data
+      // An empty list of string to dump data about taskLists
       List<String> taskListStringList = [];
 
-      // Get List Name and Dump on top of String List
+      // Get List Name and Dump on top
       String listName = taskList.listName;
       taskListStringList.add(listName);
 
@@ -147,12 +196,13 @@ class UserTasksData {
         String taskChecked = task.checked.toString();
 
         // Dump Task data to taskStringList
-        taskStringList.add("$taskName|$taskChecked");
+        taskStringList.add("$taskName^|^$taskChecked");
       }
 
       // Dump list of Tasks in TaskList String dump
-      taskListStringList.add(taskStringList.join("||"));
-      userTasksStringDump.add(taskListStringList.join("|||"));
+      taskListStringList.add(taskStringList.join("^||^"));
+      userTasksStringDump.add(taskListStringList.join("^|||^"));
     }
+    return userTasksStringDump.join("^||||^");
   }
 }

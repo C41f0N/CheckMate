@@ -8,7 +8,7 @@ import '../task_data_classes/task_class.dart';
 
 class TaskDatabase {
   UserTasksData tasksData = UserTasksData();
-  String? focusedTaskListName;
+  String? focusedTaskListName = "Main Tasks";
   final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
 
   void createDefaultData() {
@@ -18,6 +18,7 @@ class TaskDatabase {
 
   bool loadData() {
     if (_myBox.get("USER_TASKS_DATA") == null) {
+      print("creating default data");
       // Create defaults and save
       createDefaultData();
       saveData();
@@ -38,7 +39,9 @@ class TaskDatabase {
 
   void changeCompleteStatus(String taskName) {
     // Get the tasks list
-    tasksData.toggleTaskCompletion(focusedTaskListName!, taskName);
+    if (focusedTaskListName != null) {
+      tasksData.toggleTaskCompletion(focusedTaskListName!, taskName);
+    }
     saveData();
   }
 
@@ -48,22 +51,78 @@ class TaskDatabase {
   }
 
   void addTaskAtIndex(Task task, int index) {
-    tasksData.addTaskToListAtIndex(focusedTaskListName!, task, index);
+    if (focusedTaskListName != null) {
+      tasksData.addTaskToListAtIndex(focusedTaskListName!, task, index);
+    }
     saveData();
   }
 
   bool checkTaskExistence(String taskName) {
     loadData();
-    return tasksData.checkTaskExistence(focusedTaskListName!, taskName);
+    if (focusedTaskListName != null) {
+      return tasksData.checkTaskExistence(focusedTaskListName!, taskName);
+    } else {
+      return false;
+    }
   }
 
   void deleteTask(String taskName) {
-    tasksData.deleteTask(focusedTaskListName!, taskName);
+    if (focusedTaskListName != null) {
+      tasksData.deleteTask(focusedTaskListName!, taskName);
+    }
     saveData();
   }
 
   Task deleteTaskAtIndex(int index) {
-    return tasksData.deleteTaskAtIndex(focusedTaskListName!, index);
+    if (focusedTaskListName != null) {
+      return tasksData.deleteTaskAtIndex(focusedTaskListName!, index);
+    } else {
+      return Task("", false);
+    }
+  }
+
+  void deleteCheckedTasks() {
+
+    tasksData.deleteCheckedTasks(focusedTaskListName!);
+    saveData();
+  }
+
+  void editTaskName(String oldTaskName, String newTaskName) {
+    tasksData.editTaskName(focusedTaskListName!, oldTaskName, newTaskName);
+    saveData();
+  }
+
+  int getTaskIndex(String taskName) {
+    return tasksData.getTaskIndex(focusedTaskListName!, taskName);
+  }
+
+  Task getTaskFromIndex(int index) {
+    return tasksData.getTaskFromIndex(focusedTaskListName!, index);
+  }
+
+  List<Task> getTaskList() {
+    return tasksData.getTaskList(focusedTaskListName!);
+  }
+
+  List<String> getAllListNames() {
+    loadData();
+    return tasksData.getListNames();
+  }
+
+  void addNewList(String listName) {
+    tasksData.addNewList(listName);
+    saveData();
+  }
+
+  void deleteTaskList(String listName) {
+    tasksData.deleteTaskList(listName);
+    saveData();
+  }
+
+  void switchToAnotherTaskList(String listName) {
+    if (tasksData.checkTaskListExistance(listName)) {
+      focusedTaskListName = listName;
+    }
   }
 
   Future<String> uploadDataToServer() async {
@@ -116,27 +175,5 @@ class TaskDatabase {
     } else {
       return "0";
     }
-  }
-
-  void deleteCheckedTasks() {
-    tasksData.deleteCheckedTasks(focusedTaskListName!);
-    saveData();
-  }
-
-  void editTaskName(String oldTaskName, String newTaskName) {
-   tasksData.editTaskName(focusedTaskListName!, oldTaskName, newTaskName);
-   saveData();
-  }
-  
-  int getTaskIndex(String taskName) {
-    return tasksData.getTaskIndex(focusedTaskListName!, taskName);
-  }
-  
-  Task getTaskFromIndex(int index) {
-    return tasksData.getTaskFromIndex(focusedTaskListName!, index);
-  }
-
-  List<Task> getTaskList() {
-    return tasksData.getTaskList(focusedTaskListName!);
   }
 }
