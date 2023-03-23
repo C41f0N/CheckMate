@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../config.dart';
-
 class ConnectivitySensitiveButton extends StatelessWidget {
   const ConnectivitySensitiveButton(
       {super.key,

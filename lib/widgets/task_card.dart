@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sarims_todo_app/config.dart';
 
+// ignore: must_be_immutable
 class TaskCard extends StatefulWidget {
   TaskCard(
       {super.key,

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
+import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/dialogues/change_theme_dialogue.dart';
 import 'package:sarims_todo_app/dialogues/credits.dart';
@@ -41,7 +42,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      print("$userModifyingData ${DateTime.now()}");
       if (!DateTime.now().isBefore(nextUpdateAt) && timer.isActive) {
         if (checkServerUpdateAppointmentStatus() && !userModifyingData) {
           await uploadTaskData();
@@ -78,7 +78,21 @@ class _HomePageState extends State<HomePage> {
             ? Theme.of(context).primaryColor.withAlpha(200)
             : Theme.of(context).primaryColor,
         title: !reorderMode
-            ? const Text("C H E C K    M A T E")
+            ? db.getCurrentListName() != null
+                ? Text(
+                    db.getCurrentListName()!,
+                  )
+                : Center(
+                    child: SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(
+                        color: currentTheme.isDark()
+                            ? Colors.grey[900]
+                            : Colors.grey[200],
+                      ),
+                    ),
+                  )
             // ? const Text("T O - D O   L I S T")
             : const Text("R E O R D E R   M O D E"),
         centerTitle: true,
@@ -93,8 +107,10 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               if (!isUploading && !isRefreshing) {
                 setState(() {
-                  reorderMode = !reorderMode;
-                  userModifyingData = reorderMode;
+                  // reorderMode = !reorderMode;
+                  // userModifyingData = reorderMode;
+                  print(db.getAllListNames());
+                  db.switchToAnotherTaskList("Main Tasks");
                 });
               }
             },

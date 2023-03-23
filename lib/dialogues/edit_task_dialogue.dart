@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class EditTaskDialogue extends StatefulWidget {
   EditTaskDialogue(
       {super.key,
@@ -88,12 +89,12 @@ class _EditTaskDialogueState extends State<EditTaskDialogue> {
                   });
                 }
               },
-              child: const Text("Add"),
+              child: const Text("Edit"),
             )
           ],
         ),
       ),
     );
-    ;
+    
   }
 }

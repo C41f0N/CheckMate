@@ -11,6 +11,14 @@ class TaskDatabase {
   String? focusedTaskListName = "Main Tasks";
   final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
 
+  TaskDatabase() {
+    if (getAllListNames().isNotEmpty) {
+      focusedTaskListName = getAllListNames()[0];
+    } else {
+      createDefaultData();
+    }
+  }
+
   void createDefaultData() {
     focusedTaskListName = "Main Tasks";
     tasksData.createDefaultData();
@@ -18,7 +26,6 @@ class TaskDatabase {
 
   bool loadData() {
     if (_myBox.get("USER_TASKS_DATA") == null) {
-      print("creating default data");
       // Create defaults and save
       createDefaultData();
       saveData();
@@ -82,26 +89,41 @@ class TaskDatabase {
   }
 
   void deleteCheckedTasks() {
-
-    tasksData.deleteCheckedTasks(focusedTaskListName!);
+    if (focusedTaskListName != null) {
+      tasksData.deleteCheckedTasks(focusedTaskListName!);
+    }
     saveData();
   }
 
   void editTaskName(String oldTaskName, String newTaskName) {
-    tasksData.editTaskName(focusedTaskListName!, oldTaskName, newTaskName);
+    if (focusedTaskListName != null) {
+      tasksData.editTaskName(focusedTaskListName!, oldTaskName, newTaskName);
+    }
     saveData();
   }
 
   int getTaskIndex(String taskName) {
-    return tasksData.getTaskIndex(focusedTaskListName!, taskName);
+    if (focusedTaskListName != null) {
+      return tasksData.getTaskIndex(focusedTaskListName!, taskName);
+    } else {
+      return -1;
+    }
   }
 
   Task getTaskFromIndex(int index) {
-    return tasksData.getTaskFromIndex(focusedTaskListName!, index);
+    if (focusedTaskListName != null) {
+      return tasksData.getTaskFromIndex(focusedTaskListName!, index);
+    } else {
+      return Task("", false);
+    }
   }
 
   List<Task> getTaskList() {
-    return tasksData.getTaskList(focusedTaskListName!);
+    if (focusedTaskListName != null) {
+      return tasksData.getTaskList(focusedTaskListName!);
+    } else {
+      return [];
+    }
   }
 
   List<String> getAllListNames() {
@@ -123,6 +145,10 @@ class TaskDatabase {
     if (tasksData.checkTaskListExistance(listName)) {
       focusedTaskListName = listName;
     }
+  }
+
+  String? getCurrentListName() {
+    return focusedTaskListName;
   }
 
   Future<String> uploadDataToServer() async {

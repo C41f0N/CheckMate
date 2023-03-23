@@ -6,7 +6,6 @@ class UserTasksData {
 
   // To create default data
   createDefaultData() {
-    print("Creating default data");
     taskLists = [
       TaskList("Main Tasks", [
         Task("Feed Dog", false),
@@ -134,7 +133,6 @@ class UserTasksData {
 
   // To generate a UserTask instance from previously parsed data
   parseFromString(String stringUserData) {
-    print("String User Data: $stringUserData");
     if (stringUserData.isNotEmpty) {
       // empty previously held data
       taskLists = [];
