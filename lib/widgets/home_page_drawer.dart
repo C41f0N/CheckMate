@@ -1,8 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-
+import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
 import '../config.dart';
-import '../data_ops/user_session_local_ops.dart';
 
 class HomePageDrawer extends StatefulWidget {
   const HomePageDrawer({
@@ -12,6 +11,7 @@ class HomePageDrawer extends StatefulWidget {
     required this.changePasswordMethod,
     required this.showCreditsDialogMethod,
     required this.deleteCheckedTasksMethod,
+    required this.showChangeCheckListDialogue,
   });
 
   final Function() logoutMethod;
@@ -19,6 +19,7 @@ class HomePageDrawer extends StatefulWidget {
   final Function() changePasswordMethod;
   final Function() showCreditsDialogMethod;
   final Function() deleteCheckedTasksMethod;
+  final Function() showChangeCheckListDialogue;
 
   @override
   State<HomePageDrawer> createState() => _HomePageDrawerState();
@@ -28,48 +29,93 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          DrawerHeader(
-            child: Container(
-              alignment: Alignment.bottomLeft,
-              child: AutoSizeText(
-                // "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
-                "CheckMate",
-                style: TextStyle(
-                    color: currentTheme.isDark()
-                        ? Colors.grey[900]
-                        : Colors.grey[200],
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold),
+          Column(
+            children: [
+              DrawerHeader(
+                child: Container(
+                  alignment: Alignment.bottomLeft,
+                  child: AutoSizeText(
+                    // "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
+                    "CheckMate",
+                    style: TextStyle(
+                        color: currentTheme.isDark()
+                            ? Colors.grey[900]
+                            : Colors.grey[200],
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
+              DrawerButton(
+                onTap: widget.deleteCheckedTasksMethod,
+                label: "Remove Checked",
+                iconData: Icons.remove_done,
+              ),
+              DrawerButton(
+                onTap: widget.showChangeCheckListDialogue,
+                label: "Change Check List",
+                iconData: Icons.list_alt,
+              ),
+              DrawerButton(
+                onTap: widget.showChangeThemeMethod,
+                label: "Change Theme",
+                iconData: Icons.color_lens,
+              ),
+              DrawerButton(
+                onTap: widget.changePasswordMethod,
+                label: "Change Password",
+                iconData: Icons.password,
+              ),
+              DrawerButton(
+                onTap: widget.logoutMethod,
+                label: "Logout",
+                iconData: Icons.logout,
+              ),
+              DrawerButton(
+                onTap: widget.showCreditsDialogMethod,
+                label: "Credits",
+                iconData: Icons.info,
+              ),
+            ],
+          ),
+          // Bottom Bar
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  child: const Icon(Icons.logout),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      getSessionUsername(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color:
+                            currentTheme.isDark() ? Colors.black : Colors.white,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Container(
+                      child: const Icon(
+                        Icons.person,
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
-          DrawerButton(
-            onTap: widget.deleteCheckedTasksMethod,
-            label: "Remove Checked",
-            iconData: Icons.remove_done,
-          ),
-          DrawerButton(
-            onTap: widget.showChangeThemeMethod,
-            label: "Change Theme",
-            iconData: Icons.color_lens,
-          ),
-          DrawerButton(
-            onTap: widget.changePasswordMethod,
-            label: "Change Password",
-            iconData: Icons.password,
-          ),
-          DrawerButton(
-            onTap: widget.logoutMethod,
-            label: "Logout",
-            iconData: Icons.logout,
-          ),
-          DrawerButton(
-            onTap: widget.showCreditsDialogMethod,
-            label: "Credits",
-            iconData: Icons.info,
-          ),
+          )
         ],
       ),
     );

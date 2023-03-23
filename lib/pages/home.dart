@@ -14,6 +14,7 @@ import 'package:sarims_todo_app/widgets/refreshing_data_indicator.dart';
 import 'package:sarims_todo_app/widgets/task_card.dart';
 import '../data_ops/user_session_local_ops.dart';
 import '../dialogues/add_task_dialogue.dart';
+import '../dialogues/change_checklist_dialogue.dart';
 import '../dialogues/edit_task_dialogue.dart';
 import '../task_data_classes/task_class.dart';
 import '../widgets/uploading_data_indicator.dart';
@@ -72,6 +73,7 @@ class _HomePageState extends State<HomePage> {
         changePasswordMethod: changePassword,
         showCreditsDialogMethod: showCreditsDialog,
         deleteCheckedTasksMethod: deleteCheckedTasks,
+        showChangeCheckListDialogue: showChangeCheckListDialogue,
       ),
       appBar: AppBar(
         backgroundColor: reorderMode
@@ -345,6 +347,28 @@ class _HomePageState extends State<HomePage> {
             ],
           )),
     );
+  }
+
+  void showChangeCheckListDialogue() {
+    showDialog(
+      context: context,
+      builder: ((context) => ChangeCheckListDialogue(
+            listNames: db.getAllListNames(),
+            addNewTaskListMethod: (x) {},
+            deleteTaskListMethod: deleteTaskList,
+            switchToTaskListMethod: switchToTaskList,
+          )),
+    );
+  }
+
+  void deleteTaskList(String listName) {
+    db.deleteTaskList(listName);
+  }
+
+  void switchToTaskList(String listName) {
+    setState(() {
+      db.switchToAnotherTaskList(listName);
+    });
   }
 
   void showAddTaskDialogue() {
