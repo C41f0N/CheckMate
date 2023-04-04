@@ -109,10 +109,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               if (!isUploading && !isRefreshing) {
                 setState(() {
-                  // reorderMode = !reorderMode;
-                  // userModifyingData = reorderMode;
-                  print(db.getAllListNames());
-                  db.switchToAnotherTaskList("Main Tasks");
+                  reorderMode = !reorderMode;
+                  userModifyingData = reorderMode;
                 });
               }
             },
@@ -353,16 +351,33 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: ((context) => ChangeCheckListDialogue(
-            listNames: db.getAllListNames(),
-            addNewTaskListMethod: (x) {},
+            getAllListNameMethod: getAllListNames,
+            addNewTaskListMethod: addNewTaskList,
             deleteTaskListMethod: deleteTaskList,
             switchToTaskListMethod: switchToTaskList,
+            getFocusedListNameMethod: getFocusedListName,
           )),
     );
   }
 
+  List<String> getAllListNames() {
+    return db.getAllListNames();
+  }
+
+  String getFocusedListName() {
+    return db.getCurrentListName()!;
+  }
+
   void deleteTaskList(String listName) {
     db.deleteTaskList(listName);
+    setUpdateAppointmentWithServerStatus(true);
+    setState(() {});
+  }
+
+  void addNewTaskList(String listName) {
+    db.addNewList(listName);
+    setUpdateAppointmentWithServerStatus(true);
+    setState(() {});
   }
 
   void switchToTaskList(String listName) {

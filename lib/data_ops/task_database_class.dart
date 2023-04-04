@@ -119,6 +119,7 @@ class TaskDatabase {
   }
 
   List<Task> getTaskList() {
+    loadData();
     if (focusedTaskListName != null) {
       return tasksData.getTaskList(focusedTaskListName!);
     } else {
@@ -148,6 +149,7 @@ class TaskDatabase {
   }
 
   String? getCurrentListName() {
+    loadData();
     return focusedTaskListName;
   }
 
