@@ -29,94 +29,104 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              DrawerHeader(
-                child: Container(
-                  alignment: Alignment.bottomLeft,
-                  child: AutoSizeText(
-                    // "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
-                    "CheckMate",
-                    style: TextStyle(
-                        color: currentTheme.isDark()
-                            ? Colors.grey[900]
-                            : Colors.grey[200],
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              DrawerButton(
-                onTap: widget.deleteCheckedTasksMethod,
-                label: "Remove Checked",
-                iconData: Icons.remove_done,
-              ),
-              DrawerButton(
-                onTap: widget.showChangeCheckListDialogue,
-                label: "Change Check List",
-                iconData: Icons.list_alt,
-              ),
-              DrawerButton(
-                onTap: widget.showChangeThemeMethod,
-                label: "Change Theme",
-                iconData: Icons.color_lens,
-              ),
-              DrawerButton(
-                onTap: widget.changePasswordMethod,
-                label: "Change Password",
-                iconData: Icons.password,
-              ),
-              DrawerButton(
-                onTap: widget.logoutMethod,
-                label: "Logout",
-                iconData: Icons.logout,
-              ),
-              DrawerButton(
-                onTap: widget.showCreditsDialogMethod,
-                label: "Credits",
-                iconData: Icons.info,
-              ),
-            ],
-          ),
-          // Bottom Bar
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
               children: [
                 Container(
-                  child: const Icon(Icons.logout),
+                  height: MediaQuery.of(context).size.height * 0.31,
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12.0, 8.0, 8.0, 8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AutoSizeText(
+                          // "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
+                          "CheckMate",
+                          style: TextStyle(
+                              color: currentTheme.isDark()
+                                  ? Colors.grey[900]
+                                  : Colors.grey[200],
+                              fontSize: 45,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 2,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.person),
+                            const SizedBox(width: 5),
+                            Transform.translate(
+                              offset: const Offset(0, 2),
+                              child: Text(
+                                "Logged in as ${getSessionUsername()}",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300,
+                                  color: currentTheme.isDark()
+                                      ? Colors.grey[900]
+                                      : Colors.grey[200],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      getSessionUsername(),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color:
-                            currentTheme.isDark() ? Colors.black : Colors.white,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Container(
-                      child: const Icon(
-                        Icons.person,
-                        size: 30,
-                      ),
-                    ),
-                  ],
+                // Divider(
+                //   thickness: 2,
+                //   color: Theme.of(context).primaryColor,
+                // ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  height: 2,
+                  color: Theme.of(context).primaryColor,
+                ),
+                DrawerButton(
+                  onTap: widget.deleteCheckedTasksMethod,
+                  label: "Remove Checked",
+                  iconData: Icons.remove_done,
+                ),
+                DrawerButton(
+                  onTap: widget.showChangeCheckListDialogue,
+                  label: "Change Check List",
+                  iconData: Icons.list_alt,
+                ),
+                DrawerButton(
+                  onTap: widget.showChangeThemeMethod,
+                  label: "Change Theme",
+                  iconData: Icons.color_lens,
+                ),
+                DrawerButton(
+                  onTap: widget.changePasswordMethod,
+                  label: "Change Password",
+                  iconData: Icons.password,
+                ),
+                DrawerButton(
+                  onTap: widget.logoutMethod,
+                  label: "Logout",
+                  iconData: Icons.logout,
+                ),
+                DrawerButton(
+                  onTap: widget.showCreditsDialogMethod,
+                  label: "Credits",
+                  iconData: Icons.info,
                 ),
               ],
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -135,27 +145,38 @@ class DrawerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Icon(
-            iconData,
-            color: currentTheme.isDark() ? Colors.grey[900] : Colors.grey[200],
+    return Column(
+      children: [
+        ListTile(
+          tileColor: Theme.of(context).scaffoldBackgroundColor,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                iconData,
+                color:
+                    currentTheme.isDark() ? Colors.grey[900] : Colors.grey[200],
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                label,
+                style: TextStyle(
+                  color: currentTheme.isDark()
+                      ? Colors.grey[900]
+                      : Colors.grey[200],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            label,
-            style: TextStyle(
-              color:
-                  currentTheme.isDark() ? Colors.grey[900] : Colors.grey[200],
-            ),
-          ),
-        ],
-      ),
-      onTap: onTap,
+          onTap: onTap,
+        ),
+        Container(
+          height: 2,
+          color: Theme.of(context).primaryColor,
+        ),
+      ],
     );
   }
 }

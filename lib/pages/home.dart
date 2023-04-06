@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
-import 'package:sarims_todo_app/config.dart';
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/dialogues/change_theme_dialogue.dart';
 import 'package:sarims_todo_app/dialogues/credits.dart';
