@@ -29,7 +29,7 @@ class _AddNewTaskListDialogueState extends State<AddNewTaskListDialogue> {
             Text(
               "Add Task List",
               style: TextStyle(
-                fontSize: 25,
+                fontSize: 30,
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -62,13 +62,14 @@ class _AddNewTaskListDialogueState extends State<AddNewTaskListDialogue> {
               onPressed: () async {
                 if (!widget.taskLists.contains(taskListNameController.text)) {
                   if (taskListNameController.text != '') {
-                    if (!taskListNameController.text.contains("|")) {
+                    if (!taskListNameController.text.contains("|") &&
+                        !taskListNameController.text.contains("^")) {
                       widget.addTaskListCallback(taskListNameController.text);
                       errorText = null;
                       Navigator.pop(context);
                     } else {
                       setState(() {
-                        errorText = "Task List name cannot contain '|'";
+                        errorText = "Task List name cannot contain '|' or '^'";
                       });
                     }
                   }

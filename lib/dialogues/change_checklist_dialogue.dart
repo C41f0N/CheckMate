@@ -36,7 +36,7 @@ class _ChangeCheckListDialogueState extends State<ChangeCheckListDialogue> {
         "Check Lists",
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 23,
+          fontSize: 30,
           color: Theme.of(context).primaryColor,
           fontWeight: FontWeight.bold,
         ),
@@ -46,7 +46,7 @@ class _ChangeCheckListDialogueState extends State<ChangeCheckListDialogue> {
         children: [
           SizedBox(
             height: 300,
-            width: 200,
+            width: 220,
             child: Scrollbar(
               thumbVisibility: true,
               child: ListView.builder(

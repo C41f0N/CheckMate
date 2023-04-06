@@ -13,7 +13,7 @@ class YouHaveNoTasksBanner extends StatelessWidget {
           height: MediaQuery.of(context).size.height * 0.37,
         ),
         Text(
-          "You have no tasks.",
+          "You have no tasks\nin this list.",
           textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.grey[200],
@@ -21,7 +21,7 @@ class YouHaveNoTasksBanner extends StatelessWidget {
               fontWeight: FontWeight.bold),
         ),
         const SizedBox(
-          height: 20,
+          height: 13,
         ),
         Text(
           "Add some using the\nbutton below.",

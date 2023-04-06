@@ -80,21 +80,20 @@ class _HomePageState extends State<HomePage> {
             ? Theme.of(context).primaryColor.withAlpha(200)
             : Theme.of(context).primaryColor,
         title: !reorderMode
-            ? db.getCurrentListName() != null
-                ? Text(
-                    db.getCurrentListName()!,
-                  )
-                : Center(
-                    child: SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(
-                        color: currentTheme.isDark()
-                            ? Colors.grey[900]
-                            : Colors.grey[200],
-                      ),
+            ? GestureDetector(
+                onTap: showChangeCheckListDialogue,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      db.getCurrentListName(),
                     ),
-                  )
+                    db.getAllListNames().length > 1
+                        ? const Icon(Icons.arrow_drop_down)
+                        : const SizedBox(),
+                  ],
+                ),
+              )
             // ? const Text("T O - D O   L I S T")
             : const Text("R E O R D E R   M O D E"),
         centerTitle: true,

@@ -22,14 +22,14 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
     return AlertDialog(
       contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       content: SizedBox(
-        height: 200,
+        height: 250,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Add Task",
               style: TextStyle(
-                fontSize: 25,
+                fontSize: 30,
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
@@ -63,13 +63,13 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
                 if (!widget
                     .checkTaskExistenceCallback(taskNameController.text)) {
                   if (taskNameController.text != '') {
-                    if (!taskNameController.text.contains("|")) {
+                    if (!taskNameController.text.contains("|") && !taskNameController.text.contains("^")) {
                       widget.addTaskCallback(taskNameController.text);
                       errorText = null;
                       Navigator.pop(context);
                     } else {
                       setState(() {
-                        errorText = "Task name cannot contain '|'";
+                        errorText = "Task name cannot contain '|' or '^'";
                       });
                     }
                   }
