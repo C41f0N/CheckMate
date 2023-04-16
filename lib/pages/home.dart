@@ -6,6 +6,7 @@ import 'package:observe_internet_connectivity/observe_internet_connectivity.dart
 import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 import 'package:sarims_todo_app/dialogues/change_theme_dialogue.dart';
 import 'package:sarims_todo_app/dialogues/credits.dart';
+import 'package:sarims_todo_app/dialogues/usage_dialogue.dart';
 import 'package:sarims_todo_app/utils/ui_banners/you_have_no_tasks_banner.dart';
 import 'package:sarims_todo_app/widgets/home_page_drawer.dart';
 import 'package:sarims_todo_app/widgets/no_internet_indicator.dart';
@@ -15,7 +16,6 @@ import '../data_ops/user_session_local_ops.dart';
 import '../dialogues/add_task_dialogue.dart';
 import '../dialogues/change_checklist_dialogue.dart';
 import '../dialogues/edit_task_dialogue.dart';
-import '../dialogues/usage_dialogue.dart';
 import '../task_data_classes/task_class.dart';
 import '../widgets/uploading_data_indicator.dart';
 
@@ -51,6 +51,14 @@ class _HomePageState extends State<HomePage> {
             await refreshTaskData();
           }
         }
+      }
+      if (_myBox.get("TUTORIAL_SHOWN") != true) {
+        await Future.delayed(
+          const Duration(seconds: 5),
+          showTutorialDialogue(),
+        ).then((value) {
+          _myBox.put("TUTORIAL_SHOWN", true);
+        });
       }
     });
     super.initState();
@@ -95,8 +103,7 @@ class _HomePageState extends State<HomePage> {
             // ? const Text("T O - D O   L I S T")
             : const Text(
                 "R E O R D E R   M O D E",
-                style: TextStyle(
-                ),
+                style: TextStyle(),
               ),
         centerTitle: true,
         actions: [
@@ -559,5 +566,13 @@ class _HomePageState extends State<HomePage> {
         setUpdateAppointmentWithServerStatus(true);
       });
     });
+  }
+
+  showTutorialDialogue() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) => const UsageExplainerMinimalDialogue(),
+    );
   }
 }

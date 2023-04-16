@@ -9,16 +9,16 @@ class UsageExplainerMinimalDialogue extends StatelessWidget {
     return AlertDialog(
       actionsPadding: const EdgeInsets.all(16),
       title: Text(
-        "Hello there!",
+        "Hi there! 😁",
         style: TextStyle(
           color: Colors.grey[200],
           fontWeight: FontWeight.w600,
-          fontSize: 25,
+          fontSize: 30,
         ),
         textAlign: TextAlign.center,
       ),
       content: SizedBox(
-        height: 230,
+        height: 220,
         width: 250,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -26,15 +26,13 @@ class UsageExplainerMinimalDialogue extends StatelessWidget {
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
-                  style: TextStyle(
-                    color: Colors.grey[300],
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 230, 230, 230),
                     // fontWeight: FontWeight.w300,
-                    fontSize: 17,
+                    fontSize: 16,
                   ),
                   children: <TextSpan>[
-                    const TextSpan(
-                      text: "Here is a useful tip,\nYou can swipe ",
-                    ),
+                    const TextSpan(text: "Here is a useful tip,\nYou can swipe "),
                     const TextSpan(
                         text: "right",
                         style: TextStyle(fontWeight: FontWeight.bold)),
@@ -47,7 +45,7 @@ class UsageExplainerMinimalDialogue extends StatelessWidget {
                         text: "delete ",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.red[700])),
+                            color: Colors.red[400])),
                     const TextSpan(text: "or "),
                     TextSpan(
                         text: "edit ",
