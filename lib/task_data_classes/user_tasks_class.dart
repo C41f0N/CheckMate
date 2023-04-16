@@ -67,10 +67,8 @@ class UserTasksData {
   }
 
   // Get index of a task in a list
-  getTaskIndex(String taskListName, String taskName) {
-    taskLists
-        .firstWhere((taskListData) => taskListData.listName == taskListName)
-        .getTaskIndex(taskName);
+  int getTaskIndex(String taskListName, String taskName) {
+    return taskLists.firstWhere((taskListData) => taskListData.listName == taskListName).getTaskIndex(taskName);
   }
 
   // get Task object from its index

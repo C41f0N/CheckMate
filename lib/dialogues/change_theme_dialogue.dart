@@ -9,38 +9,23 @@ class ChangeThemeDialogue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(
-        "Select Primary Color",
+      title: Text(
+        "What are you\nfeeling like?",
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 20, color: Colors.white),
+        style: TextStyle(
+          fontSize: 23,
+          color: Colors.grey[200],
+          fontWeight: FontWeight.w300,
+        ),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      content: SizedBox(
-        height: 250,
-        width: 200,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            MaterialColorPicker(
-              selectedColor: currentTheme.getCurrentPrimarySwatch(),
-              colors: currentTheme.getColorSwatchOptions(),
-              allowShades: false,
-              onMainColorChange: (color) {
-                currentTheme.setPrimarySwatch(color as MaterialColor);
-              },
-            ),
-            const SizedBox(height: 20,),
-            Text(
-              "Tip: Refresh the list to see minor changes take effect.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 13,
-              ),
-            )
-          ],
-        ),
+      content: MaterialColorPicker(
+        selectedColor: currentTheme.getCurrentPrimarySwatch(),
+        colors: currentTheme.getColorSwatchOptions(),
+        allowShades: false,
+        onMainColorChange: (color) {
+          currentTheme.setPrimarySwatch(color as MaterialColor);
+        },
       ),
     );
   }

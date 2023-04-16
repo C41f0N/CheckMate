@@ -15,6 +15,7 @@ import '../data_ops/user_session_local_ops.dart';
 import '../dialogues/add_task_dialogue.dart';
 import '../dialogues/change_checklist_dialogue.dart';
 import '../dialogues/edit_task_dialogue.dart';
+import '../dialogues/usage_dialogue.dart';
 import '../task_data_classes/task_class.dart';
 import '../widgets/uploading_data_indicator.dart';
 
@@ -87,14 +88,16 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       db.getCurrentListName(),
                     ),
-                    db.getAllListNames().length > 1
-                        ? const Icon(Icons.arrow_drop_down)
-                        : const SizedBox(),
+                    const Icon(Icons.arrow_drop_down)
                   ],
                 ),
               )
             // ? const Text("T O - D O   L I S T")
-            : const Text("R E O R D E R   M O D E"),
+            : const Text(
+                "R E O R D E R   M O D E",
+                style: TextStyle(
+                ),
+              ),
         centerTitle: true,
         actions: [
           !(Platform.isAndroid || Platform.isIOS) && !userModifyingData
@@ -363,7 +366,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String getFocusedListName() {
-    return db.getCurrentListName()!;
+    return db.getCurrentListName();
   }
 
   void deleteTaskList(String listName) {
@@ -507,7 +510,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: ((context) => AlertDialog(
               title: const Text(
-                "Remove all completed tasks?",
+                "Remove all completed tasks in opened list?",
                 style: TextStyle(
                   color: Colors.white,
                 ),

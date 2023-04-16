@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
-import '../config.dart';
 
 class HomePageDrawer extends StatefulWidget {
   const HomePageDrawer({
@@ -49,32 +48,28 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                           // "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
                           "CheckMate",
                           style: TextStyle(
-                              color: currentTheme.isDark()
-                                  ? Colors.grey[900]
-                                  : Colors.grey[200],
+                              color: Colors.grey[200],
                               fontSize: 45,
                               fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(
-                          height: 2,
+                          height: 4,
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Icon(Icons.person),
+                            Icon(
+                              Icons.person,
+                              size: 20,
+                              color: Colors.grey[200],
+                            ),
                             const SizedBox(width: 5),
-                            Transform.translate(
-                              offset: const Offset(0, 2),
-                              child: Text(
-                                "Logged in as ${getSessionUsername()}",
-                                style: TextStyle(
+                            Text(
+                              "Logged in as ${getSessionUsername()}",
+                              style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w300,
-                                  color: currentTheme.isDark()
-                                      ? Colors.grey[900]
-                                      : Colors.grey[200],
-                                ),
-                              ),
+                                  color: Colors.grey[200]),
                             ),
                           ],
                         )
@@ -82,15 +77,8 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                     ),
                   ),
                 ),
-                // Divider(
-                //   thickness: 2,
-                //   color: Theme.of(context).primaryColor,
-                // ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Container(
-                  height: 2,
+                Divider(
+                  thickness: 1,
                   color: Theme.of(context).primaryColor,
                 ),
                 DrawerButton(
@@ -154,8 +142,7 @@ class DrawerButton extends StatelessWidget {
             children: [
               Icon(
                 iconData,
-                color:
-                    currentTheme.isDark() ? Colors.grey[900] : Colors.grey[200],
+                color: Colors.grey[200],
               ),
               const SizedBox(
                 width: 10,
@@ -163,18 +150,12 @@ class DrawerButton extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  color: currentTheme.isDark()
-                      ? Colors.grey[900]
-                      : Colors.grey[200],
+                  color: Colors.grey[200],
                 ),
               ),
             ],
           ),
           onTap: onTap,
-        ),
-        Container(
-          height: 2,
-          color: Theme.of(context).primaryColor,
         ),
       ],
     );

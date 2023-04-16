@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:sarims_todo_app/data_ops/task_database_class.dart';
 
 import 'add_tasklist_dialogue.dart';
 
 class ChangeCheckListDialogue extends StatefulWidget {
-  ChangeCheckListDialogue({
+  const ChangeCheckListDialogue({
     super.key,
     required this.addNewTaskListMethod,
     required this.deleteTaskListMethod,

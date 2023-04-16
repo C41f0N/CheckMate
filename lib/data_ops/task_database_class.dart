@@ -48,7 +48,6 @@ class TaskDatabase {
 
   String getFocusedList() {
     String? focusedListName = _myBox.get("FOCUSED_LIST");
-    print("focusedListName: ${focusedListName}");
 
     // if focusedListName is null or invalid, return the first list in the user's database
     if (focusedListName == null ||
