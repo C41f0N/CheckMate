@@ -56,5 +56,5 @@ void removeLoginInfoFromDevice() {
   _myBox.put("SERVER_UPDATE_NEEDED", false);
 
   // Delete any existing tasks stored on device
-  _taskDbBox.put("TASKS_LIST", null);
+  _taskDbBox.put("USER_TASKS_DATA", null);
 }

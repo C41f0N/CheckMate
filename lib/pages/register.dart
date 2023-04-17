@@ -160,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      
+
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.2),
                       Row(
@@ -243,45 +243,57 @@ class _RegisterPageState extends State<RegisterPage> {
           )),
     );
 
-    // Check if username is valid
-    final usernameResult = await verifyUsername(usernameController.text);
-    if (usernameResult != "ERROR") {
-      if (usernameResult == "0") {
-        usernameError = null;
-        usernameValid = true;
-      } else {
-        usernameValid = false;
-        usernameError = "Username already exists.";
-        registerSuccessful = false;
-      }
+    // Check provided username validity
+    if (usernameController.text.contains(" ") ||
+        usernameController.text.contains("\n")) {
+      usernameError = "Cannot contain spaces";
+    } else {
+      // Verify username
+      final usernameResult = await verifyUsername(usernameController.text);
+      if (usernameResult != "ERROR") {
+        if (usernameResult == "0") {
+          usernameError = null;
+          usernameValid = true;
+        } else {
+          usernameValid = false;
+          usernameError = "Username already exists.";
+          registerSuccessful = false;
+        }
 
-      if (usernameValid) {
-        // Check if the passwords match
-        if (passwordController.text == reEnterPasswordController.text) {
-          passwordVerified = true;
-          setState(() {
-            passwordError = null;
-          });
+        // If valid then check password
+        if (usernameValid) {
+          // check the validity of the password
+          if (passwordController.text.length < 10) {
+            passwordError = "Has to be more than 10 characters";
+          } else {
+            // Check if the passwords match
+            if (passwordController.text == reEnterPasswordController.text) {
+              passwordVerified = true;
+              setState(() {
+                passwordError = null;
+              });
 
-          final registerUserResult = await registerUser(
-              usernameController.text, passwordController.text);
+              final registerUserResult = await registerUser(
+                  usernameController.text, passwordController.text);
 
-          // Check if there was an error
-          if (registerUserResult != "ERROR") {
-            // Register User
-            if (registerUserResult == "1") {
-              registerSuccessful = true;
-              passwordError = null;
+              // Check if there was an error
+              if (registerUserResult != "ERROR") {
+                // Register User
+                if (registerUserResult == "1") {
+                  registerSuccessful = true;
+                  passwordError = null;
+                } else {
+                  registerSuccessful = false;
+                }
+              }
             } else {
-              registerSuccessful = false;
+              setState(() {
+                passwordError = "Passwords do not match";
+                passwordVerified = false;
+                registerSuccessful = false;
+              });
             }
           }
-        } else {
-          setState(() {
-            passwordError = "Passwords do not match";
-            passwordVerified = false;
-            registerSuccessful = false;
-          });
         }
       }
     }

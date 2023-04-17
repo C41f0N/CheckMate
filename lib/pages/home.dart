@@ -53,12 +53,11 @@ class _HomePageState extends State<HomePage> {
         }
       }
       if (_myBox.get("TUTORIAL_SHOWN") != true) {
+        _myBox.put("TUTORIAL_SHOWN", true);
         await Future.delayed(
           const Duration(seconds: 5),
           showTutorialDialogue(),
-        ).then((value) {
-          _myBox.put("TUTORIAL_SHOWN", true);
-        });
+        );
       }
     });
     super.initState();

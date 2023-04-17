@@ -164,7 +164,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         height: 20,
                       ),
 
-                      // Login Button if connected, else warning message
+                      // Change Password Button if connected, else warning message
 
                       ConnectivitySensitiveButton(
                         height: 55,
@@ -274,23 +274,32 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
       // If current password is valid
       if (currentPasswordValid) {
-        // Verify New Password
-        newPasswordValid =
-            newPasswordController.text == newPasswordVerifyController.text;
-        newPasswordVerifyError =
-            newPasswordValid ? null : "Passwords do not match";
+        // check the validity of the password
+        if (newPasswordController.text.length < 10) {
+          newPasswordVerifyError = "Has to be more than 10 characters";
+          newPasswordValid = false;
+        } else {
+          // Verify New Password
+          newPasswordValid =
+              newPasswordController.text == newPasswordVerifyController.text;
+          newPasswordVerifyError =
+              newPasswordValid ? null : "Passwords do not match";
 
-        if (currentPasswordValid && newPasswordValid) {
-          if (await changePasswordOnServer(newPasswordController.text)) {
-            processSuccessful = true;
+          if (currentPasswordValid && newPasswordValid) {
+            if (await changePasswordOnServer(newPasswordController.text)) {
+              processSuccessful = true;
+            }
           }
         }
       }
     }
 
-    //set status to: not processing data
     setState(() {
+      //set status to: not processing data
       processing = false;
+
+      // Remove the dialogue
+      Navigator.pop(context);
     });
 
     // If verification was successfully done, then do this
@@ -303,17 +312,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       // encrypt data again with new key and upload
       await db.uploadDataToServer();
 
+      currentPasswordController.text = "";
+      newPasswordController.text = "";
+      newPasswordVerifyController.text = "";
+
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Password Changed Successfully.")));
-
-      // Remove Dialog
-      Navigator.of(context).pop();
 
       // Else show connection error
     } else {
       if (currentPasswordValid == true && newPasswordValid == true) {
-        // Remove Dialog
-        Navigator.of(context).pop();
         showDialog(
           context: context,
           builder: ((context) => AlertDialog(
