@@ -1,8 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:sarims_todo_app/data_ops/encryption.dart';
-import 'package:sarims_todo_app/data_ops/task_data_from_cloud.dart';
-import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
-import 'package:sarims_todo_app/task_data_classes/user_tasks_class.dart';
+import 'package:check_mate/data_ops/encryption.dart';
+import 'package:check_mate/data_ops/task_data_from_cloud.dart';
+import 'package:check_mate/data_ops/user_session_local_ops.dart';
+import 'package:check_mate/task_data_classes/user_tasks_class.dart';
 
 import '../task_data_classes/task_class.dart';
 

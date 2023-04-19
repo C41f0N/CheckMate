@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
+import 'package:check_mate/data_ops/user_session_local_ops.dart';
 
 class HomePageDrawer extends StatefulWidget {
   const HomePageDrawer({
@@ -46,7 +46,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                       children: [
                         AutoSizeText(
                           // "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
-                          "CheckMate",
+                          "checkMate",
                           style: TextStyle(
                               color: Colors.grey[200],
                               fontSize: 45,
@@ -113,6 +113,30 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                 ),
               ],
             ),
+            Container(
+              color: const Color.fromARGB(255, 17, 17, 17),
+              height: 40,
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      height: 20,
+                      child: Image.asset(
+                        'assets/images/icon/icon(rounded).png',
+                      ),
+                    ),
+                    Text(
+                      "v0.0.1(beta)",
+                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            )
           ],
         ),
       ),

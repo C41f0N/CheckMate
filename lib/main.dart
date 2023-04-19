@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:sarims_todo_app/config.dart';
-import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
-import 'package:sarims_todo_app/pages/change_password.dart';
-import 'package:sarims_todo_app/pages/home.dart';
-import 'package:sarims_todo_app/pages/login.dart';
-import 'package:sarims_todo_app/pages/register.dart';
+import 'package:check_mate/config.dart';
+import 'package:check_mate/data_ops/user_session_local_ops.dart';
+import 'package:check_mate/pages/change_password.dart';
+import 'package:check_mate/pages/home.dart';
+import 'package:check_mate/pages/login.dart';
+import 'package:check_mate/pages/register.dart';
 
 Future<void> main() async {
   await Hive.initFlutter();
@@ -38,7 +38,8 @@ class _MyAppState extends State<MyApp> {
     final primaryColor = currentTheme.getCurrentPrimarySwatch();
     final scaffoldBackgroundColor = Colors.grey[900];
     return MaterialApp(
-      title: 'Sarim\'s To-Do App',
+      debugShowCheckedModeBanner: false,
+      title: 'checkMate',
       theme: ThemeData(
           primarySwatch: primaryColor,
           primaryColor: primaryColor,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sarims_todo_app/config.dart';
+import 'package:check_mate/config.dart';
 
 class UsageExplainerMinimalDialogue extends StatelessWidget {
   const UsageExplainerMinimalDialogue({super.key});

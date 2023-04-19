@@ -23,7 +23,7 @@ class Credits extends StatelessWidget {
           const CircleAvatar(
             radius: 40,
             foregroundColor: Colors.red,
-            backgroundImage: AssetImage('assets/credits/developer_photo.jpeg'),
+            backgroundImage: AssetImage('assets/images/credits/developer_photo.jpeg'),
           ),
           const SizedBox(height: 20),
           Text(

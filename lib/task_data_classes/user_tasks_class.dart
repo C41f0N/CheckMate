@@ -1,5 +1,5 @@
-import 'package:sarims_todo_app/task_data_classes/task_class.dart';
-import 'package:sarims_todo_app/task_data_classes/task_list_class.dart';
+import 'package:check_mate/task_data_classes/task_class.dart';
+import 'package:check_mate/task_data_classes/task_list_class.dart';
 
 class UserTasksData {
   List<TaskList> taskLists = [];

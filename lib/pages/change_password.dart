@@ -3,9 +3,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
-import 'package:sarims_todo_app/config.dart';
-import 'package:sarims_todo_app/data_ops/task_database_class.dart';
-import 'package:sarims_todo_app/utils/custom_buttons/connectivity_sensitive_button.dart';
+import 'package:check_mate/config.dart';
+import 'package:check_mate/data_ops/task_database_class.dart';
+import 'package:check_mate/utils/custom_buttons/connectivity_sensitive_button.dart';
 import '../data_ops/user_session_cloud_ops.dart';
 import '../data_ops/user_session_local_ops.dart';
 

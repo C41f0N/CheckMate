@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:sarims_todo_app/config.dart';
+import 'package:check_mate/config.dart';
 
 // ignore: must_be_immutable
 class TaskCard extends StatefulWidget {

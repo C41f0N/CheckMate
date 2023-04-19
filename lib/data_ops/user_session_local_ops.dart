@@ -1,5 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:sarims_todo_app/data_ops/encryption.dart';
+import 'package:check_mate/data_ops/encryption.dart';
 
 final _myBox = Hive.box("USER_SESSION_DATA");
 final _taskDbBox = Hive.box("TASKS_LOCAL_DATABASE");

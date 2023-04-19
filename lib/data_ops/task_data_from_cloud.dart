@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:sarims_todo_app/data_ops/user_session_local_ops.dart';
+import 'package:check_mate/data_ops/user_session_local_ops.dart';
 
 Future<String> fetchEncryptedDataFromServer() async {
   // Load required data

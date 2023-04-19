@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sarims_todo_app/config.dart';
+import 'package:check_mate/config.dart';
 
 class NoInternetIndicator extends StatelessWidget {
   const NoInternetIndicator({super.key});

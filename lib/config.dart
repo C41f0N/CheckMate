@@ -1,5 +1,5 @@
 library config.globals;
 
-import 'package:sarims_todo_app/theme/theme_class.dart';
+import 'package:check_mate/theme/theme_class.dart';
 
 AppTheme currentTheme = AppTheme();
