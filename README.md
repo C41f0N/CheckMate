@@ -1,3 +1,3 @@
-# Sarim's To-Do List App
+# checkMate
 
 A privacy friendly To-Do List App with sync.
