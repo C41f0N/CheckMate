@@ -2,7 +2,7 @@
     package="com.example.sarims_todo_app">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="sarims_todo_app"
+        android:label="CheckMate"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

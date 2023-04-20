@@ -94,6 +94,9 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text(
                       db.getCurrentListName(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                     const Icon(Icons.arrow_drop_down)
                   ],

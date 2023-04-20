@@ -54,7 +54,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         style: TextStyle(
                           fontSize: 35,
                           color: Colors.grey[200],
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                       const SizedBox(
@@ -181,9 +181,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           'Change Password',
                           style: TextStyle(
                               color: currentTheme.isDark()
-                                  ? Colors.grey[800]
+                                  ? Colors.black
                                   : Colors.white,
-                              fontWeight: FontWeight.w500),
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       SizedBox(
@@ -196,15 +196,19 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(
+                          children: [
+                            const Icon(
                               Icons.arrow_back,
                               size: 15,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
-                            Text("Go Back")
+                            Text(
+                              "Go Back",
+                              // style: TextStyle(fontWeight: FontWeight.w400),
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(),
+                            )
                           ],
                         ),
                       ),

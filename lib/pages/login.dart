@@ -40,14 +40,13 @@ class _LoginPageState extends State<LoginPage> {
                       Container(
                         height: MediaQuery.of(context).size.height * 0.28,
                       ),
-
                       // Login Title
                       Text(
                         "Login",
                         style: TextStyle(
                           fontSize: 35,
                           color: Colors.grey[200],
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
                       const SizedBox(
@@ -122,9 +121,9 @@ class _LoginPageState extends State<LoginPage> {
                           'Login',
                           style: TextStyle(
                               color: currentTheme.isDark()
-                                  ? Colors.grey[800]
+                                  ? Colors.black
                                   : Colors.white,
-                              fontWeight: FontWeight.w500),
+                              fontWeight: FontWeight.w400),
                         ),
                       ),
                       SizedBox(

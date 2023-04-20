@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:check_mate/config.dart';
 import 'package:flutter/material.dart';
 import 'package:check_mate/data_ops/user_session_local_ops.dart';
 
@@ -28,7 +29,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color.fromARGB(255, 18, 18, 18),
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,7 +37,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
             Column(
               children: [
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.31,
+                  height: MediaQuery.of(context).size.height * 0.35,
                   alignment: Alignment.bottomLeft,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(12.0, 8.0, 8.0, 8.0),
@@ -44,13 +45,16 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AutoSizeText(
-                          // "${getSessionUsername().substring(0, 1).toUpperCase()}${getSessionUsername().substring(1)}'s Check List",
-                          "checkMate",
-                          style: TextStyle(
-                              color: Colors.grey[200],
-                              fontSize: 45,
-                              fontWeight: FontWeight.bold),
+                        Transform.translate(
+                          offset: const Offset(0, 6),
+                          child: Container(
+                              alignment: Alignment.bottomLeft,
+                              height: 80,
+                              width: 250,
+                              child: Image.asset(
+                                'assets/images/title/checkMateTitle.png',
+                                color: Colors.grey[200],
+                              )),
                         ),
                         const SizedBox(
                           height: 4,
@@ -58,18 +62,25 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            const SizedBox(
+                              width: 5,
+                            ),
                             Icon(
                               Icons.person,
-                              size: 20,
+                              size: 25,
                               color: Colors.grey[200],
                             ),
                             const SizedBox(width: 5),
-                            Text(
-                              "Logged in as ${getSessionUsername()}",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w300,
-                                  color: Colors.grey[200]),
+                            Transform.translate(
+                              offset: const Offset(0, 0.5),
+                              child: Text(
+                                "Logged in as ${getSessionUsername()}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[200],
+                                  // color: Colors.grey[200],
+                                ),
+                              ),
                             ),
                           ],
                         )
@@ -79,7 +90,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                 ),
                 Divider(
                   thickness: 1,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColor.withAlpha(150),
                 ),
                 DrawerButton(
                   onTap: widget.deleteCheckedTasksMethod,
@@ -113,14 +124,13 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                 ),
               ],
             ),
-            Container(
-              color: const Color.fromARGB(255, 17, 17, 17),
+            SizedBox(
               height: 40,
               width: MediaQuery.of(context).size.width,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+                padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
@@ -131,7 +141,11 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
                     ),
                     Text(
                       "v0.0.1(beta)",
-                      style: TextStyle(color: Colors.grey[600], fontSize: 11),
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w300,
+                      ),
                     ),
                   ],
                 ),
@@ -160,7 +174,7 @@ class DrawerButton extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          tileColor: Theme.of(context).scaffoldBackgroundColor,
+          tileColor: Colors.transparent,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -174,6 +188,7 @@ class DrawerButton extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
+                  fontWeight: FontWeight.w300,
                   color: Colors.grey[200],
                 ),
               ),

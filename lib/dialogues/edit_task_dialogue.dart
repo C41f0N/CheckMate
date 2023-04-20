@@ -19,8 +19,6 @@ class EditTaskDialogue extends StatefulWidget {
 }
 
 class _EditTaskDialogueState extends State<EditTaskDialogue> {
-
-  
   @override
   void initState() {
     widget.taskNameController.text = widget.oldTaskName;
@@ -32,7 +30,7 @@ class _EditTaskDialogueState extends State<EditTaskDialogue> {
     return AlertDialog(
       contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       content: SizedBox(
-        height: 200,
+        height: 220,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -70,23 +68,28 @@ class _EditTaskDialogueState extends State<EditTaskDialogue> {
             ),
             ElevatedButton(
               onPressed: () async {
-                if (!widget
-                    .checkTaskExistenceCallback(widget.taskNameController.text)) {
-                  if (widget.taskNameController.text != '') {
-                    if (!widget.taskNameController.text.contains("|")) {
-                      widget.editTaskName(widget.oldTaskName, widget.taskNameController.text);
-                      widget.errorText = null;
-                      Navigator.pop(context);
-                    } else {
-                      setState(() {
-                        widget.errorText = "Task name cannot contain '|'";
-                      });
-                    }
-                  }
+                if (widget.taskNameController.text == widget.oldTaskName) {
+                  Navigator.pop(context);
                 } else {
-                  setState(() {
-                    widget.errorText = "Task Already Exists";
-                  });
+                  if (!widget.checkTaskExistenceCallback(
+                      widget.taskNameController.text)) {
+                    if (widget.taskNameController.text != '') {
+                      if (!widget.taskNameController.text.contains("|")) {
+                        widget.editTaskName(
+                            widget.oldTaskName, widget.taskNameController.text);
+                        widget.errorText = null;
+                        Navigator.pop(context);
+                      } else {
+                        setState(() {
+                          widget.errorText = "Task name cannot contain '|'";
+                        });
+                      }
+                    }
+                  } else {
+                    setState(() {
+                      widget.errorText = "Task Already Exists";
+                    });
+                  }
                 }
               },
               child: const Text("Edit"),
@@ -95,6 +98,5 @@ class _EditTaskDialogueState extends State<EditTaskDialogue> {
         ),
       ),
     );
-    
   }
 }

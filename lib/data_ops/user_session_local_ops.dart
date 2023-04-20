@@ -35,6 +35,9 @@ Future<void> saveLoginInfoToDevice(String username, String password) async {
   _myBox.put(
       "SESSION_ENCRYPTION_KEY", await generate32CharEncryptionCode(password));
 
+  // Delete any existing tasks stored on device
+  _taskDbBox.put("USER_TASKS_DATA", null);
+
   // set login status to true
   _myBox.put("LOGGED_IN", true);
 }
