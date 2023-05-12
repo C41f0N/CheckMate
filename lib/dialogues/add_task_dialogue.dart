@@ -40,6 +40,7 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
             ),
             TextField(
               controller: taskNameController,
+              keyboardType: TextInputType.name,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 label: const Text("New Task"),

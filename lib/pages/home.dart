@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
@@ -89,17 +90,23 @@ class _HomePageState extends State<HomePage> {
         title: !reorderMode
             ? GestureDetector(
                 onTap: showChangeCheckListDialogue,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      db.getCurrentListName(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w400,
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 30,
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AutoSizeText(
+                        db.getCurrentListName(),
+                        maxLines: null,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const Icon(Icons.arrow_drop_down)
-                  ],
+                      const Icon(Icons.arrow_drop_down)
+                    ],
+                  ),
                 ),
               )
             // ? const Text("T O - D O   L I S T")

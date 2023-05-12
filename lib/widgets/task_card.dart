@@ -133,7 +133,7 @@ class _TaskCardState extends State<TaskCard> {
                             : !widget.completed
                                 ? Colors.grey[200]
                                 : Colors.grey[200]!.withOpacity(0.5),
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.w500,
                         fontSize: 20,
                         decoration: widget.completed
                             ? TextDecoration.lineThrough

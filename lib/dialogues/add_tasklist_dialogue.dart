@@ -39,6 +39,7 @@ class _AddNewTaskListDialogueState extends State<AddNewTaskListDialogue> {
               height: 30,
             ),
             TextField(
+              keyboardType: TextInputType.name,
               controller: taskListNameController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
@@ -61,6 +62,7 @@ class _AddNewTaskListDialogueState extends State<AddNewTaskListDialogue> {
             ElevatedButton(
               onPressed: () async {
                 if (!widget.taskLists.contains(taskListNameController.text)) {
+                  if (taskListNameController.text.length <= 18) {
                   if (taskListNameController.text != '') {
                     if (!taskListNameController.text.contains("|") &&
                         !taskListNameController.text.contains("^")) {
@@ -72,6 +74,10 @@ class _AddNewTaskListDialogueState extends State<AddNewTaskListDialogue> {
                         errorText = "Task List name cannot contain '|' or '^'";
                       });
                     }
+                  }} else {
+                    setState(() {
+                      errorText = "Cannot be longer that 18 letters";
+                    });
                   }
                 } else {
                   setState(() {

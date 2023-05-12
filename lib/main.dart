@@ -1,3 +1,4 @@
+import 'package:check_mate/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -96,9 +97,10 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      initialRoute: '/register',
       // initialRoute: getLoginStatus() ? '/home' : '/login',
+      initialRoute: '/splash',
       routes: {
+        '/splash': ((context) => const SplashScreen()),
         '/home': ((context) => const HomePage()),
         '/login': ((context) => const LoginPage()),
         '/register': ((context) => const RegisterPage()),
