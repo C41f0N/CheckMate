@@ -1,3 +1,3 @@
-# checkMate
+# CheckMate
 
-A privacy friendly To-Do List App with sync.
+A simple multi device sync todo list app that respects your privacy.
