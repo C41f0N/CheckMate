@@ -32,7 +32,7 @@ class _TaskCardState extends State<TaskCard> {
     widget.onDelete(widget.taskName);
   }
 
-  void onEditTaskNameWithContext (BuildContext context) {
+  void onEditTaskNameWithContext(BuildContext context) {
     widget.onEditTaskName(widget.taskName);
   }
 
@@ -63,7 +63,7 @@ class _TaskCardState extends State<TaskCard> {
           children: [
             SlidableAction(
               borderRadius: BorderRadius.circular(4),
-              backgroundColor: Colors.yellow[700]!,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               icon: Icons.edit,
               onPressed: onEditTaskNameWithContext,
             ),
@@ -75,13 +75,7 @@ class _TaskCardState extends State<TaskCard> {
             key: UniqueKey(),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: widget.completed
-                  ? widget.reorderingMode
-                      ? Colors.grey[800]!.withOpacity(0.7)
-                      : Colors.grey[800]
-                  : widget.reorderingMode
-                      ? Theme.of(context).colorScheme.secondary.withOpacity(0.7)
-                      : Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.secondary,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Padding(
@@ -93,26 +87,19 @@ class _TaskCardState extends State<TaskCard> {
                           padding: const EdgeInsets.all(12.0),
                           child: Icon(
                             Icons.menu,
-                            color: widget.completed
-                                ? Theme.of(context)
-                                    .iconTheme
-                                    .color
-                                    ?.withOpacity(0.7)
-                                : Theme.of(context).iconTheme.color,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSecondary
+                                .withOpacity(0.7),
                           ),
                         )
                       : Checkbox(
-                          activeColor: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.7),
+                          activeColor: Theme.of(context).colorScheme.primary,
                           checkColor: currentTheme.isDark()
                               ? Colors.grey[900]
                               : Colors.white,
                           side: BorderSide(
-                            color: currentTheme.isDark()
-                                ? Colors.grey[800]!
-                                : const Color.fromARGB(255, 234, 234, 234),
+                            color: Theme.of(context).colorScheme.primary,
                             width: 2,
                           ),
                           value: widget.completed,
@@ -126,13 +113,12 @@ class _TaskCardState extends State<TaskCard> {
                       minFontSize: 20,
                       widget.taskName,
                       style: TextStyle(
-                        color: currentTheme.isDark()
-                            ? !widget.completed
-                                ? Colors.black
-                                : Colors.black.withOpacity(0.7)
-                            : !widget.completed
-                                ? Colors.grey[200]
-                                : Colors.grey[200]!.withOpacity(0.5),
+                        color: widget.completed
+                            ? Theme.of(context)
+                                .colorScheme
+                                .onSecondary
+                                .withOpacity(0.2)
+                            : Theme.of(context).colorScheme.onSecondary,
                         fontWeight: FontWeight.w500,
                         fontSize: 20,
                         decoration: widget.completed
@@ -151,10 +137,10 @@ class _TaskCardState extends State<TaskCard> {
   }
 
   void onTap() {
-            if (!widget.reorderingMode && widget.enabled) {
-              widget.completed = !widget.completed;
-              widget.onTaskCheckChange(widget.taskName, widget.completed);
-              setState(() {});
-            }
-          }
+    if (!widget.reorderingMode && widget.enabled) {
+      widget.completed = !widget.completed;
+      widget.onTaskCheckChange(widget.taskName, widget.completed);
+      setState(() {});
+    }
+  }
 }

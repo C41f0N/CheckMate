@@ -75,6 +75,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       drawer: HomePageDrawer(
         logoutMethod: logout,
         showChangeThemeMethod: showThemeChangeDialogue,
@@ -253,6 +254,8 @@ class _HomePageState extends State<HomePage> {
           }),
       floatingActionButton: !reorderMode
           ? FloatingActionButton(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
               onPressed: showAddTaskDialogue,
               child: const Icon(Icons.add),
             )

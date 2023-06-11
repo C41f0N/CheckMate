@@ -1,5 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:check_mate/config.dart';
 import 'package:flutter/material.dart';
 import 'package:check_mate/data_ops/user_session_local_ops.dart';
 
@@ -29,7 +27,7 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: const Color.fromARGB(255, 18, 18, 18),
+      backgroundColor: Theme.of(context).colorScheme.background,
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

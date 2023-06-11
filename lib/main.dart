@@ -1,9 +1,9 @@
 import 'package:check_mate/pages/splash.dart';
+import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:check_mate/config.dart';
-import 'package:check_mate/data_ops/user_session_local_ops.dart';
 import 'package:check_mate/pages/change_password.dart';
 import 'package:check_mate/pages/home.dart';
 import 'package:check_mate/pages/login.dart';
@@ -15,6 +15,8 @@ Future<void> main() async {
   await Hive.openBox("TASKS_LOCAL_DATABASE");
   await Hive.openBox("USER_SESSION_DATA");
   await Hive.openBox("THEME_DATA");
+
+  await DesktopWindow.setWindowSize(const Size(500, 800));
 
   runApp(const MyApp());
 }
@@ -37,21 +39,34 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
     SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-      ]);
+      DeviceOrientation.portraitUp,
+    ]);
 
     final primaryColor = currentTheme.getCurrentPrimarySwatch();
-    const Color scaffoldBackgroundColor = Color.fromARGB(255, 18, 18, 18);
+    const Color scaffoldBackgroundColor = Color.fromARGB(255, 15, 15, 15);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'CheckMate',
       theme: ThemeData(
+        colorScheme: ColorScheme(
+          brightness: Brightness.dark,
+          primary: primaryColor,
+          onPrimary: currentTheme.isDark() ? Colors.black : Colors.white,
+          secondary: const Color.fromARGB(255, 25, 25, 25),
+          onSecondary: Colors.white,
+          error: Colors.red,
+          onError: Colors.white,
+          background: scaffoldBackgroundColor,
+          onBackground: Colors.white,
+          surface: primaryColor,
+          onSurface: currentTheme.isDark() ? Colors.black : Colors.white,
+        ),
         primarySwatch: primaryColor,
         primaryColor: primaryColor,
-        scaffoldBackgroundColor: scaffoldBackgroundColor,
-        dialogBackgroundColor: scaffoldBackgroundColor,
+        scaffoldBackgroundColor: Colors.black,
+        dialogBackgroundColor: Color.fromARGB(255, 28, 28, 28),
         dialogTheme: DialogTheme(
           titleTextStyle: TextStyle(
             fontWeight: FontWeight.w300,

@@ -133,6 +133,7 @@ class _ChangeCheckListDialogueState extends State<ChangeCheckListDialogue> {
               ),
             ),
           ),
+          SizedBox(height: 10,),
           ElevatedButton(
             onPressed: () {
               showDialog(
