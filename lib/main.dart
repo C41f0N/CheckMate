@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:check_mate/pages/splash.dart';
 import 'package:desktop_window/desktop_window.dart';
 import 'package:flutter/material.dart';
@@ -10,13 +12,16 @@ import 'package:check_mate/pages/login.dart';
 import 'package:check_mate/pages/register.dart';
 
 Future<void> main() async {
+  if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+    WidgetsFlutterBinding.ensureInitialized();
+    await DesktopWindow.setWindowSize(const Size(500, 800));
+  }
+
   await Hive.initFlutter();
 
   await Hive.openBox("TASKS_LOCAL_DATABASE");
   await Hive.openBox("USER_SESSION_DATA");
   await Hive.openBox("THEME_DATA");
-
-  await DesktopWindow.setWindowSize(const Size(500, 800));
 
   runApp(const MyApp());
 }
@@ -54,7 +59,7 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.dark,
           primary: primaryColor,
           onPrimary: currentTheme.isDark() ? Colors.black : Colors.white,
-          secondary: const Color.fromARGB(255, 25, 25, 25),
+          secondary: const Color.fromARGB(255, 36, 36, 36),
           onSecondary: Colors.white,
           error: Colors.red,
           onError: Colors.white,
