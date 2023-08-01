@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import 'package:check_mate/data_ops/task_database_class.dart';
 import 'package:check_mate/dialogues/change_theme_dialogue.dart';
 import 'package:check_mate/dialogues/credits.dart';
