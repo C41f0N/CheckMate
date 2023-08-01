@@ -24,7 +24,7 @@ class NoInternetIndicator extends StatelessWidget {
             width: 10,
           ),
           Text(
-            "Can't connect, changes wont be saved.",
+            "Couldn't connect, changes were not synced.",
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: currentTheme.isDark() ? Colors.black : Colors.white,
