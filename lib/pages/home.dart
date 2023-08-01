@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import 'package:check_mate/data_ops/task_database_class.dart';
 import 'package:check_mate/dialogues/change_theme_dialogue.dart';
 import 'package:check_mate/dialogues/credits.dart';
@@ -17,6 +16,7 @@ import '../data_ops/user_session_local_ops.dart';
 import '../dialogues/add_task_dialogue.dart';
 import '../dialogues/change_checklist_dialogue.dart';
 import '../dialogues/edit_task_dialogue.dart';
+import '../dialogues/error_dialogue.dart';
 import '../task_data_classes/task_class.dart';
 import '../widgets/uploading_data_indicator.dart';
 
@@ -30,12 +30,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TaskDatabase db = TaskDatabase();
   final _myBox = Hive.box("TASKS_LOCAL_DATABASE");
-  DateTime nextUpdateAt = DateTime.now().add(const Duration(seconds: 5));
+  DateTime nextUpdateAt = DateTime.now().add(const Duration(seconds: 15));
   Timer? timer;
   bool isFirstUpdate = true;
   bool isUploading = false;
   bool isRefreshing = false;
   bool userModifyingData = false;
+  bool hasSynced = true;
 
   @override
   void initState() {
@@ -138,124 +139,106 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: StreamBuilder(
-          // Checking internet availability
-          stream: InternetConnectivity().observeInternetConnection,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              bool hasConnection = snapshot.data!;
-              return Stack(
-                alignment: AlignmentDirectional.topStart,
-                children: [
-                  FutureBuilder(
-                      // Check if it is the first update, if it is,
-                      // then load data from the servers instead of
-                      // local storage
-                      future: isFirstUpdate
-                          ? db.getTaskDataFromServer()
-                          : Future.sync(() => db.loadData()),
-                      builder: (context, snapshot) {
-                        isFirstUpdate = false;
+      body: Stack(
+        alignment: AlignmentDirectional.topStart,
+        children: [
+          FutureBuilder(
+              // Check if it is the first update, if it is,
+              // then load data from the servers instead of
+              // local storage
+              future: isFirstUpdate
+                  ? db.getTaskDataFromServer()
+                  : Future.sync(() => db.loadData()),
+              builder: (context, snapshot) {
+                isFirstUpdate = false;
 
-                        var taskList = db.getTaskList();
-                        // Add an empty space to the top of the list if
-                        // a banner needss to be placed.
-                        List<Widget> taskDisplayList = [
-                          SizedBox(
-                            height:
-                                isUploading || isRefreshing || !hasConnection
-                                    ? 40
-                                    : 0,
-                          ),
-                          ...taskList.map((Task task) {
-                            return TaskCard(
-                              key: UniqueKey(),
-                              taskName: task.taskName,
-                              completed: task.checked,
-                              onTaskCheckChange: isRefreshing || isUploading
-                                  ? (taskName, completed) {}
-                                  : onTaskCheckChange,
-                              onDelete: isRefreshing || isUploading
-                                  ? (taskName) {}
-                                  : deleteTask,
-                              reorderingMode: reorderMode,
-                              enabled: !(isUploading || isRefreshing),
-                              onEditTaskName: onEditTaskName,
-                            );
-                          }).toList()
-                        ];
+                var taskList = db.getTaskList();
+                // Add an empty space to the top of the list if
+                // a banner needss to be placed.
+                List<Widget> taskDisplayList = [
+                  SizedBox(
+                    height: isUploading || isRefreshing || !hasSynced ? 40 : 0,
+                  ),
+                  ...taskList.map((Task task) {
+                    return TaskCard(
+                      key: UniqueKey(),
+                      taskName: task.taskName,
+                      completed: task.checked,
+                      onTaskCheckChange: isRefreshing || isUploading
+                          ? (taskName, completed) {}
+                          : onTaskCheckChange,
+                      onDelete: isRefreshing || isUploading
+                          ? (taskName) {}
+                          : deleteTask,
+                      reorderingMode: reorderMode,
+                      enabled: !(isUploading || isRefreshing),
+                      onEditTaskName: onEditTaskName,
+                    );
+                  }).toList()
+                ];
 
-                        if (snapshot.hasData) {
-                          return reorderMode
-                              ? taskList.isNotEmpty
-                                  ? ReorderableListView(
-                                      header: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            height: 6,
-                                          ),
-                                          SizedBox(
-                                              height: !hasConnection ||
-                                                      isRefreshing ||
-                                                      isUploading
-                                                  ? 40
-                                                  : 0),
-                                        ],
-                                      ),
-                                      // buildDefaultDragHandles: true,
-                                      padding:
-                                          const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      onReorder: onReorder,
-                                      children: taskDisplayList.sublist(1),
-                                    )
-                                  : taskList.isNotEmpty
-                                      ? ListView(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 6, 0, 0),
-                                          clipBehavior: Clip.antiAlias,
-                                          children: taskDisplayList)
-                                      : const YouHaveNoTasksBanner()
-                              : RefreshIndicator(
-                                  backgroundColor:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  key: GlobalKey<RefreshIndicatorState>(),
-                                  onRefresh: refreshList,
-                                  // Check if reorder mode is turned on
-                                  child: taskList.isNotEmpty
-                                      ? ListView(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 6, 0, 0),
-                                          clipBehavior: Clip.antiAlias,
-                                          children: taskDisplayList,
-                                        )
-                                      : const YouHaveNoTasksBanner(),
-                                );
-                        } else {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                      }),
-                  hasConnection
-                      ? isUploading
-                          ? const UploadingDataIndicator()
-                          : isRefreshing
-                              ? const RefreshingDataIndicator()
-                              : const SizedBox()
-                      : const NoInternetIndicator(),
-                ],
-              );
-            } else {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
+                if (snapshot.hasData) {
+                  return reorderMode
+                      ? taskList.isNotEmpty
+                          ? ReorderableListView(
+                              header: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 6,
+                                  ),
+                                  SizedBox(
+                                      height: !hasSynced ||
+                                              isRefreshing ||
+                                              isUploading
+                                          ? 40
+                                          : 0),
+                                ],
+                              ),
+                              // buildDefaultDragHandles: true,
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              onReorder: onReorder,
+                              children: taskDisplayList.sublist(1),
+                            )
+                          : taskList.isNotEmpty
+                              ? ListView(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                  clipBehavior: Clip.antiAlias,
+                                  children: taskDisplayList)
+                              : const YouHaveNoTasksBanner()
+                      : RefreshIndicator(
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
+                          key: GlobalKey<RefreshIndicatorState>(),
+                          onRefresh: refreshList,
+                          // Check if reorder mode is turned on
+                          child: taskList.isNotEmpty
+                              ? ListView(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                                  clipBehavior: Clip.antiAlias,
+                                  children: taskDisplayList,
+                                )
+                              : const YouHaveNoTasksBanner(),
+                        );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              }),
+          isUploading
+              ? const UploadingDataIndicator()
+              : isRefreshing
+                  ? const RefreshingDataIndicator()
+                  : !hasSynced
+                      ? const NoInternetIndicator()
+                      : const SizedBox()
+        ],
+      ),
       floatingActionButton: !reorderMode
           ? FloatingActionButton(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               onPressed: showAddTaskDialogue,
               child: const Icon(Icons.add),
             )
@@ -446,7 +429,7 @@ class _HomePageState extends State<HomePage> {
 
   void setUpdateAppointmentWithServerStatus(bool value) {
     if (value) {
-      nextUpdateAt = DateTime.now().add(const Duration(seconds: 3));
+      nextUpdateAt = DateTime.now().add(const Duration(seconds: 10));
     }
     _myBox.put("SERVER_UPDATE_NEEDED", value);
   }
@@ -466,10 +449,26 @@ class _HomePageState extends State<HomePage> {
     });
     final uploadResult = await db.uploadDataToServer();
     if (uploadResult == "1") {
+      setState(() {
+        hasSynced = true;
+      });
       nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       setUpdateAppointmentWithServerStatus(false);
     } else if (uploadResult == "password_changed") {
       onChangedPassword();
+    } else if (uploadResult == "0") {
+      if (hasSynced == true) {
+        setState(() {
+          hasSynced = false;
+        });
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (_) => const ErrorDialogue(
+            errorMessage: 'Could not connect to server.',
+          ),
+        );
+      }
     }
     setState(() {
       isUploading = false;
@@ -486,10 +485,28 @@ class _HomePageState extends State<HomePage> {
       isRefreshing = false;
     });
     if (downloadResult == "1") {
+      setState(() {
+        hasSynced = true;
+      });
       nextUpdateAt = DateTime.now().add(const Duration(seconds: 30));
       db.loadData();
     } else if (downloadResult == "password_changed") {
       onChangedPassword();
+    } else if (downloadResult == "0") {
+      // ignore: use_build_context_synchronously
+
+      if (hasSynced == true) {
+        setState(() {
+          hasSynced = false;
+        });
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (_) => const ErrorDialogue(
+            errorMessage: 'Could not connect to server.',
+          ),
+        );
+      }
     }
   }
 

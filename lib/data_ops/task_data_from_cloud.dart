@@ -8,10 +8,11 @@ Future<String> fetchEncryptedDataFromServer() async {
 
   // Fetch raw data from server
   try {
-    final result = await http.get(Uri.parse(
+    final result = await http.post(Uri.parse(
         'https://sarimahmed.tech/sarim-s_todo_app/get_task_data.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}'));
     return result.body;
   } on Exception catch (_) {
+    print(_.toString());
     return "";
   }
 }
@@ -23,7 +24,7 @@ Future<String> uploadEncryptedDataToServer(encryptedData) async {
 
   // Upload data to server
   try {
-    final result = await http.get(Uri.parse(
+    final result = await http.post(Uri.parse(
         'https://sarimahmed.tech/sarim-s_todo_app/upload_task_data.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}&task_data=${Uri.encodeComponent(encryptedData)}'));
     return result.body;
   } on Exception catch (_) {

@@ -12,7 +12,6 @@ class TaskDatabase {
 
   TaskDatabase() {
     if (getAllListNames().isNotEmpty) {
-      setFocusedList(tasksData.getListNames()[0]);
     } else {
       createDefaultData();
     }
