@@ -32,9 +32,9 @@ class Credits extends StatelessWidget {
             style: TextStyle(color: Colors.grey[200]),
           ),
           const SizedBox(height: 30),
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const [
+            children: [
               SocialMediaLinkButton(
                 iconData: FontAwesomeIcons.instagram,
                 link: 'https://www.instagram.com/_sarimahmed_/',

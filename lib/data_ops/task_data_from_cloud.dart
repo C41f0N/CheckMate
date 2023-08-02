@@ -12,7 +12,6 @@ Future<String> fetchEncryptedDataFromServer() async {
         'https://sarimahmed.tech/sarim-s_todo_app/get_task_data.php?username=${Uri.encodeComponent(username)}&hash=${Uri.encodeComponent(hash)}'));
     return result.body;
   } on Exception catch (_) {
-    print(_.toString());
     return "";
   }
 }

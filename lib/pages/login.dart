@@ -181,13 +181,13 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: ((context) => AlertDialog(
+        builder: ((context) => const AlertDialog(
               content: SizedBox(
                 height: 100,
                 child: Center(
                     child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     CircularProgressIndicator(),
                     SizedBox(height: 20),
                     Text(

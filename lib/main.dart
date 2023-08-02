@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: primaryColor,
         primaryColor: primaryColor,
         scaffoldBackgroundColor: Colors.black,
-        dialogBackgroundColor: Color.fromARGB(255, 28, 28, 28),
+        dialogBackgroundColor: const Color.fromARGB(255, 28, 28, 28),
         dialogTheme: DialogTheme(
           titleTextStyle: TextStyle(
             fontWeight: FontWeight.w300,

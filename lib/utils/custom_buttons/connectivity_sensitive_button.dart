@@ -31,9 +31,9 @@ class ConnectivitySensitiveButton extends StatelessWidget {
         width: width,
         child: hasConnection
             ? child
-            : Row(
+            : const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
+                children: [
                   Icon(Icons
                       .signal_wifi_statusbar_connected_no_internet_4_rounded),
                   SizedBox(
