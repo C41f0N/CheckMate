@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   bool isRefreshing = false;
   bool userModifyingData = false;
   bool hasSynced = true;
+  bool showingError = false;
 
   @override
   void initState() {
@@ -462,12 +463,19 @@ class _HomePageState extends State<HomePage> {
           hasSynced = false;
         });
         // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (_) => const ErrorDialogue(
-            errorMessage: 'Could not connect to server.',
-          ),
-        );
+
+        if (!showingError) {
+          showingError = true;
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (_) => const ErrorDialogue(
+              errorMessage: 'Could not connect to server.',
+            ),
+          ).then((value) {
+            showingError = false;
+          });
+        }
       }
     }
     setState(() {
@@ -500,12 +508,18 @@ class _HomePageState extends State<HomePage> {
           hasSynced = false;
         });
         // ignore: use_build_context_synchronously
-        showDialog(
-          context: context,
-          builder: (_) => const ErrorDialogue(
-            errorMessage: 'Could not connect to server.',
-          ),
-        );
+        if (!showingError) {
+          showingError = true;
+          // ignore: use_build_context_synchronously
+          showDialog(
+            context: context,
+            builder: (_) => const ErrorDialogue(
+              errorMessage: 'Could not connect to server.',
+            ),
+          ).then((value) {
+            showingError = false;
+          });
+        }
       }
     }
   }
