@@ -52,7 +52,7 @@ class _TaskCardState extends State<TaskCard> {
           children: [
             SlidableAction(
               borderRadius: BorderRadius.circular(4),
-              backgroundColor: Colors.red[700]!,
+              backgroundColor: Colors.red[900]!,
               icon: Icons.delete,
               onPressed: onDeleteWithContext,
             ),
