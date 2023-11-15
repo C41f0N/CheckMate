@@ -55,41 +55,47 @@ class _AddNewTaskListDialogueState extends State<AddNewTaskListDialogue> {
                   ),
                 ),
               ),
+              onSubmitted: (x) {
+                addTaskList();
+              },
             ),
             const SizedBox(
               height: 20,
             ),
             ElevatedButton(
-              onPressed: () async {
-                if (!widget.taskLists.contains(taskListNameController.text)) {
-                  if (taskListNameController.text.length <= 18) {
-                  if (taskListNameController.text != '') {
-                    if (!taskListNameController.text.contains("|") &&
-                        !taskListNameController.text.contains("^")) {
-                      widget.addTaskListCallback(taskListNameController.text);
-                      errorText = null;
-                      Navigator.pop(context);
-                    } else {
-                      setState(() {
-                        errorText = "Task List name cannot contain '|' or '^'";
-                      });
-                    }
-                  }} else {
-                    setState(() {
-                      errorText = "Cannot be longer that 18 letters";
-                    });
-                  }
-                } else {
-                  setState(() {
-                    errorText = "Task List Already Exists";
-                  });
-                }
-              },
+              onPressed: addTaskList,
               child: const Text("Add"),
             )
           ],
         ),
       ),
     );
+  }
+
+  void addTaskList() {
+    if (!widget.taskLists.contains(taskListNameController.text)) {
+      if (taskListNameController.text.length <= 18) {
+        if (taskListNameController.text != '') {
+          if (!taskListNameController.text.contains("|") &&
+              !taskListNameController.text.contains("^")) {
+            widget.addTaskListCallback(taskListNameController.text);
+            errorText = null;
+            Navigator.pop(context);
+          } else {
+            setState(() {
+              errorText = "Task List name cannot contain '|' or '^'";
+            });
+          }
+        }
+      } else {
+        setState(() {
+          errorText = "Cannot be longer that 18 letters";
+        });
+      }
+    } else {
+      setState(() {
+        errorText = "Task List Already Exists";
+      });
+    }
   }
 }
