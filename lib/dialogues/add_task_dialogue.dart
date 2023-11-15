@@ -55,36 +55,41 @@ class _AddTaskDialogueState extends State<AddTaskDialogue> {
                   ),
                 ),
               ),
+              onSubmitted: (x) {
+                addTask();
+              },
             ),
             const SizedBox(
               height: 20,
             ),
             ElevatedButton(
-              onPressed: () async {
-                if (!widget
-                    .checkTaskExistenceCallback(taskNameController.text)) {
-                  if (taskNameController.text != '') {
-                    if (!taskNameController.text.contains("|") && !taskNameController.text.contains("^")) {
-                      widget.addTaskCallback(taskNameController.text);
-                      errorText = null;
-                      Navigator.pop(context);
-                    } else {
-                      setState(() {
-                        errorText = "Task name cannot contain '|' or '^'";
-                      });
-                    }
-                  }
-                } else {
-                  setState(() {
-                    errorText = "Task Already Exists";
-                  });
-                }
-              },
+              onPressed: addTask,
               child: const Text("Add"),
             )
           ],
         ),
       ),
     );
+  }
+
+  void addTask() {
+    if (!widget.checkTaskExistenceCallback(taskNameController.text)) {
+      if (taskNameController.text != '') {
+        if (!taskNameController.text.contains("|") &&
+            !taskNameController.text.contains("^")) {
+          widget.addTaskCallback(taskNameController.text);
+          errorText = null;
+          Navigator.pop(context);
+        } else {
+          setState(() {
+            errorText = "Task name cannot contain '|' or '^'";
+          });
+        }
+      }
+    } else {
+      setState(() {
+        errorText = "Task Already Exists";
+      });
+    }
   }
 }

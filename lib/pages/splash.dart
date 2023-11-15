@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 1), () {
           Navigator.pushReplacementNamed(
               context, getLoginStatus() ? "/home" : "/login");
         });

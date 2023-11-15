@@ -273,21 +273,16 @@ class _HomePageState extends State<HomePage> {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Deleted Task"),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  db.addTaskAtIndex(deletedTask, index);
-                  setUpdateAppointmentWithServerStatus(true);
-                });
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              },
-              child: const Text("Undo"),
-            )
-          ],
+        content: const Text("Deleted Task"),
+        action: SnackBarAction(
+          label: "Undo",
+          onPressed: () {
+            setState(() {
+              db.addTaskAtIndex(deletedTask, index);
+              setUpdateAppointmentWithServerStatus(true);
+            });
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
         ),
       ),
     );

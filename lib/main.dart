@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.dark,
           primary: primaryColor,
           onPrimary: currentTheme.isDark() ? Colors.black : Colors.white,
-          secondary: const Color.fromARGB(255, 36, 36, 36),
+          secondary: const Color.fromARGB(255, 24, 24, 24),
           onSecondary: Colors.white,
           error: Colors.red,
           onError: Colors.white,
@@ -68,10 +68,15 @@ class _MyAppState extends State<MyApp> {
           surface: primaryColor,
           onSurface: currentTheme.isDark() ? Colors.black : Colors.white,
         ),
+        snackBarTheme: SnackBarThemeData(
+          backgroundColor: const Color.fromARGB(255, 24, 24, 24),
+          contentTextStyle: TextStyle(color: Colors.grey[200]),
+          actionTextColor: Colors.grey[200],
+        ),
         primarySwatch: primaryColor,
         primaryColor: primaryColor,
         scaffoldBackgroundColor: Colors.black,
-        dialogBackgroundColor: const Color.fromARGB(255, 28, 28, 28),
+        dialogBackgroundColor: const Color.fromARGB(255, 19, 19, 19),
         dialogTheme: DialogTheme(
           titleTextStyle: TextStyle(
             fontWeight: FontWeight.w300,
